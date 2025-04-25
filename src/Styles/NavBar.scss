@@ -1,0 +1,406 @@
+.layout-container {
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+  .Layout-Header{
+    display: flex;
+    flex-direction: row;
+    height: 110px;
+    width: 100%;
+        .Header-left{
+            flex :1;
+            background-color: #2f363e;
+            display: flex;
+            align-items: center;
+            .logo {
+                font-size: 30px;
+                font-weight: bold;
+                color: #fff;
+                display: flex; 
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 10px;
+                margin-left: 50px;
+            
+                .logo-image {
+                    height: 50px; 
+                    margin-right: 10px; 
+                  }
+                .logo-text {
+                    display: flex;
+                    flex-direction: column;
+                  }
+                
+                  .Ticket {
+                    color: #13b497; 
+                  }
+                
+                  .System {
+                    margin-top:-10px ;
+                    color: #fff;
+                  }
+                }
+            &.collapsed {
+                 transition: all 0.9s ease;
+                 flex: 0.2;
+                .logo {
+                   margin-left: 10px;
+                   padding-right: 10px;
+                    .logo-image{
+                     }
+                    .logo-text {
+                     display: none;
+                    }
+                }
+            }   
+        }
+        .Header-right{
+            flex:5;
+            background-color:  rgb(36, 41, 45);
+            display: flex;
+            flex-direction: row;
+                .Header-right-left {
+                        display: flex;
+                        align-items: center;
+                    
+                        .Menu {
+                          display: flex;
+                          align-items: center;
+                          background: rgb(36, 41, 45);
+                          border-radius: 20px;
+                          padding: 8px 15px;
+                          margin-left: 40px;
+                    
+                          .Menu-icon {
+                            font-size: 35px;
+                            color: #00c897;
+                            margin-right: 8px;
+                            display: flex;
+                            align-items: center; 
+                            margin-right: 20px;
+                            background: #2f363e;
+                            padding :7px
+                          }
+                    
+                          .Menu-text {
+                            color: #fff;
+                            font-weight: bold;
+                            font-size: 30px;
+                            display: flex; 
+                            align-items: center; 
+                          }
+                      }
+                }
+                .Header-right-right{
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    margin-left: auto; 
+                    margin-right: 20px;
+                    .icons {
+                        display: flex;
+                        gap: 15px;
+                        font-size: 25px;
+                        
+                        .icon-wrapper-1{
+                            background: #2f363e;
+                            border-radius: 10px;
+                            padding: 13px;
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            svg {
+                                color: #ffffff;
+                            }
+                        }
+                        .icon-wrapper {
+                            background: #2f363e;
+                            border-radius: 10px;
+                            padding: 13px;
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            svg {
+                                color: #00c897;
+                            }
+                  
+                            &.with-dot::after {
+                                content: '';
+                                width: 15px;
+                                height: 15px;
+                                background-color: #00c897;
+                                border-radius: 50%;
+                                position: absolute;
+                                top:-2px;
+                                right: -5px;
+                            }
+                        }
+                    }
+                  
+                    .user-info {
+                        display: flex;
+                        align-items: center;
+                        background: #2f363e;
+                        border-radius: 10px;
+                        gap: 15px;
+                        height:50px;
+                        padding-right: 25px;
+                  
+                        .user-avatar {
+                            width: 45px;
+                            height: 90%;
+                            border-radius: 20%;
+                            object-fit: cover;
+                            margin-left: -10px; 
+                        }
+                  
+                        .user-name {
+                            color: #fff;
+                  
+                        }
+                  
+                        svg {
+                            color: #ffffff;
+                        }
+                    }
+                    .search-bar {
+                    position: relative;
+              
+                    input {
+                        background: rgb(28, 33, 38);
+                        border: none;
+                        border-radius: 10px;
+                        padding: 8px 30px 8px 15px;
+                        color: #ffffff;
+                        width :150px;
+                        height:30px;
+                        font-size: 15px;
+                      
+                        &::placeholder {
+                          color: #b8afaf; 
+                          font-size: 15px; 
+                              }
+                       }
+              
+                    .search-icon {
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #ffffff;
+                        font-size: 20px;
+                    }
+                }
+            }
+        }
+  }
+  .SideBar-main-container{
+    display: flex;
+    flex-direction: row;
+    flex:1;
+        .SideBar{
+            flex:1;
+            background-color: #2f363e;
+           
+            &.collapsed {
+                transition: all 0.9s ease;
+                flex:0.2;
+                .sidebar-menu{
+                    .sidebar-item{
+                        .sidebar-link {
+                            font-size: 0;
+                            .sidebar-icon {
+                                font-size: 24px;
+                            }
+                            &:hover {
+                                background-image: linear-gradient(to right,#2f363e , #12997e); // Nhạt sang đậm khi hover
+                                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                                border-right: 0px;
+                            }
+                            .badge,
+                            .sidebar-arrow {
+                                display: none;
+                            }
+                        }
+                        .submenu{
+                            .submenu-item{
+                                .submenu-link{
+                                    font-size: 0;
+                                }
+                            }
+                        }
+                    }
+                }
+               
+            } 
+            .sidebar-menu {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                .sidebar-item {
+                    margin-bottom: 5px;
+          
+                    .sidebar-link {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        color: #dcdde1;
+                        padding: 10px 20px;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        font-size: 20px;
+                        font-weight: 400;
+                       
+                        .hover-list {
+                            margin-left: auto;
+                            width: 150px;
+                            background-color: #2f363e;
+                            position: absolute;
+                            top:0%;
+                            left:105%;
+                            border-radius: 10px;
+                            display: flex;
+                            flex-direction: row;
+                                
+                            .hover-list-arrow{
+                               font-size: 35px;
+                               position: absolute;
+                                top:0%;
+                                left:-12%;
+                                color: #2f363e;
+                            }
+                                .hover-list-item{
+                                    gap:10px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    font-size: 20px;
+                                    padding-bottom: 10px;
+                                    margin-left: -20px;
+                                    font-weight: 500;
+                                    .hover-list-item-link{
+                                        color: #b3b3b3;
+                                        text-decoration: none;
+                                        &:hover{
+                                            color: #ffffff;
+                                        }
+                                    }
+                                }
+                          }
+                        .sidebar-icon {
+                            font-size: 30px;
+                            margin-right: 15px;
+                        }
+          
+                        .badge {
+                            background-color: #e84118;
+                            display:flex;
+                            color: #fff;
+                            border-radius: 10px;
+                            padding: 3px 7px;
+                            font-size: 12px;
+                            margin-left: 10px; /* Đẩy badge sang phải */
+                            text-align: center;
+                            margin-bottom: -3px;
+                        }
+          
+                        .sidebar-arrow {
+                            margin-left: auto;
+                            font-size: 16px;
+                        }
+          
+                        &:hover {
+                            background-image: linear-gradient(to right,#2f363e , #12997e); // Nhạt sang đậm khi hover
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                            border-right: 10px solid #00ffcc; 
+                            border-top-right-radius: 10px;
+                            border-bottom-right-radius: 10px;
+                            border-right-style: groove;
+                        }
+                        &.Click{
+                            background-image: linear-gradient(to right,#2f363e , #12997e); // Nhạt sang đậm khi hover
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                            border-right: 10px solid #00ffcc; 
+                            border-top-right-radius: 10px;
+                            border-bottom-right-radius: 10px;
+                            border-right-style: groove; 
+                            
+
+                        }
+                    }
+          
+                    .submenu {
+                        list-style: none;
+                        padding-left: 20px;
+                        margin: 5px 0;
+                        background-color: #2f363e;
+                        border-radius: 5px;
+                        overflow: hidden; 
+                        font-weight: 400;
+                        .submenu-item {
+                            .submenu-link {
+                                display: block;
+                                color: #b3b3b3;
+                                padding: 10px 15px;
+                                text-decoration: none;
+                                font-size: 20px;
+                                transition: background-color 0.3s ease;
+                                text-align: left;
+                                margin-left: 10%; 
+                                &:hover {
+                                    color: #ffffff; /* Đổi màu chữ khi hover */
+                                }
+                            }
+                        }
+                    }
+          
+                    &:first-child {
+                        margin-top: 0;
+                    }
+                }
+                
+            }
+           
+        }
+        
+        .Main-container{
+            flex: 5;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            .Header-Link{
+                font-size: 20px;
+                font-weight: 300;
+                background-color: #2f363e;
+                color: white;
+                height: 80px;
+                display: flex;
+                align-items: center;
+                .item-first{
+                    color: #00c897;
+                    margin-left: 30px;
+                }
+                .item-second
+                {
+                    color:white;
+                    margin-left: 6px;
+                }
+            }
+            .Main{
+                border: 35px solid rgb(28, 33, 38); 
+                height: 100%;
+                overflow-y: auto;
+                box-sizing: border-box; // đảm bảo padding + border không làm vỡ layout
+                background-color:  rgb(28, 33, 38); 
+              .Main-Inner{
+                background-color: #2f363e; // hoặc màu nền bạn muốn
+                border-radius: 15px; 
+                height: 100%;
+              }
+            }
+        }
+  }
+}

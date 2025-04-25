@@ -1,0 +1,40 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 20px;
+    height: 500px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+    .header-main {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #ffffff;
+        
+        .header-main-left {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .header-main-right {
+            background-color: #00c897;
+            color: white;
+            font-size:20px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #4cd0af;
+            }
+        }
+    }
+    .Main-Inner{
+        flex:5;
+        background-color: #00c897;
+    }
+}
