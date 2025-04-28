@@ -1,0 +1,156 @@
+.rating-table-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto; 
+    overflow-y: visible;
+    background-color: #2f363e;
+    border-radius: 30px;
+    padding: 30px 10px 20px 20px; 
+    .Table-Header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    
+      .show-entries {
+        display: flex;
+        align-items: center;
+        font-size: 22px;
+        margin-top: -25px;
+        span {
+          margin-right: 5px;
+          color: #fff;
+          margin-right: 10px;
+        }
+  
+        select {
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-right: 10px;
+          color: #fff;
+          font-size: 15px;
+          background-color: rgb(28, 33, 38);
+        }
+      }
+      .Header-Search{
+        display: flex;
+        align-items: center;
+       height: 50px;
+       margin-left: auto;
+       margin-right: 10px;
+       margin-bottom: 20px;
+       position: relative;
+            .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ffffff;
+            font-size: 20px;
+           }
+       
+          .search-input {
+          background: rgb(28, 33, 38);
+          border: none;
+          border-radius: 10px;
+          padding: 8px 30px 8px 15px;
+          color: #ffffff;
+          width :300px;
+          height:30px;
+          font-size: 15px;
+        
+          &::placeholder {
+            color: #b8afaf; 
+            font-size: 15px; 
+                }
+           }
+       }
+    }
+  
+    
+  .ticket-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2f363e;
+    color: #fff;
+    font-weight: 400;
+    min-width: 1200px; /* Table rộng hơn form */
+    th{
+      width: auto;
+      font-weight: 900;
+      text-align: left;
+      
+    }
+    td {
+      padding: 12px 0px;
+      border-bottom: 1px solid #444;
+      text-align: left;
+      font-size: 18px;
+    }
+  
+    th {
+      cursor: pointer;
+      user-select: none;
+    }
+    .reply-count-cell {
+      display: flex;
+      align-items: left; 
+  }
+  
+  .reply-count-cell span {
+      background-color: #b1eeb1; /* Màu xanh lá cây nhạt */
+      color: #008000; /* Màu xanh lá cây đậm cho số */
+      border-radius: 8px; /* Bo tròn góc */
+      padding: 8px 14px; /* Khoảng cách bên trong */
+      font-weight: bold;
+      font-size: 16px;
+    }
+    tr:hover {
+      background-color: #3a3f4b;
+    }
+  
+  }
+  .pagination {
+    padding-bottom: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+  
+    .pagination-buttons {
+      display: flex;
+      gap: 8px;
+  
+      button {
+        padding: 12px 16px;
+        border-radius: 10px;
+        background-color: #5fd4bf;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+  
+        &:hover:not(:disabled) {
+          background-color: #5fd4bf;
+        }
+  
+        &.active {
+          background-color: #5fd4bf;
+          color: #fff;
+          border-color: #5fd4bf;
+        }
+  
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

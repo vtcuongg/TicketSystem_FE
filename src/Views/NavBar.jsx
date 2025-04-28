@@ -10,7 +10,7 @@ import {
     FaChartPie,
     FaUsers
 } from 'react-icons/fa';
-const NavBar = ({ children, title, path }) => {
+const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isTicketOpen, setIsTicketOpen] = useState(true);
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
     const [isReportOpen, setIsReportOpen] = useState(false)
@@ -208,17 +208,25 @@ const NavBar = ({ children, title, path }) => {
                         </li>
                     </ul>
                 </div>
-                <div className='Main-container'>
-                    <div className='Header-Link'>
-                        <div className='item-first'>{path} /</div>
-                        <div className='item-second'>{title}</div>
-                    </div>
-                    <div className='Main'>
-                        <div className='Main-Inner'>
-                            {children}
+                {showHeaderLink ?
+                    <div className='Main-container'>
+                        <div className='Header-Link'>
+                            <div className='item-first'>{path} /</div>
+                            <div className='item-second'>{title}</div>
                         </div>
+                        <div className='Main'>
+                            <div className='Main-Inner'>
+                                {children}
+                            </div>
+                        </div>
+
                     </div>
-                </div>
+                    :
+                    <div className='Main-container'>
+                        {children}
+                    </div>
+                }
+
             </div>
         </div>
     );

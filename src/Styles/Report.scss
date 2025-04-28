@@ -1,0 +1,161 @@
+.report-main-container{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: rgb(36, 41, 45);
+  margin-top: 30px;
+  margin-left: 30px;
+  border: 1px solid rgb(36, 41, 45);
+  box-shadow: none;
+  .main-top{
+    display: flex;
+    flex-direction: row;
+    height: 380px;
+    width: 100%;
+    background-color: rgb(36, 41, 45);
+    .main-top-employee{
+      height: 380px;
+      flex-grow: 1;
+      border-radius: 20px;
+      background-color: #2f363e;
+      margin-right: 30px;
+      .main-top-employee-title {
+        color: #fff;
+        border-bottom: 2px solid #44484c;
+        margin-bottom: 20px;
+        p {
+          font-size: 24px;
+          font-weight: bold;
+          color: #fff;
+          margin-left: 20px;
+        }
+      }
+      p {
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        margin-left: 20px;
+      }
+      .ReactApexChart{
+        margin-left: -50px;
+        margin-bottom: -15px;
+        margin-top: -5px;
+      
+      .apexcharts-legend {
+        position: absolute !important;
+        gap :40px;
+        top: 100 !important;
+        left: 350px !important;
+        .apexcharts-legend-series {
+          &:last-child {
+            margin-right: 0;
+          }
+
+          .apexcharts-legend-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+          }
+
+          .apexcharts-legend-text {
+            font-size: 20px !important;
+            color: rgb(255, 255, 255) !important;
+          }
+        }
+      }
+    }
+    }
+    .main-top-ticket{
+          display: flex;
+          height: 380px;
+          flex-direction: column;
+          background-color: #2f363e;
+          border-radius: 20px;
+          margin-bottom: 20px;
+          // flex-grow: 1;
+          width: 800px;
+          margin-left: auto;
+          .main-top-ticket-title {
+            display: flex;
+            color: #fff;
+            border-bottom: 2px solid #44484c;
+            margin-bottom: 20px;
+            input[type="date"]
+               {
+                margin-top: 15px;
+                padding: 10px;
+                border: 1px solid #2f363e;
+                border-radius: 10px;
+                background-color: #2f363e;
+                color: #ecf0f1;
+                font-size: 18px;
+                outline: none;
+                height: 30px;
+                &:focus {
+                  border-color: #1abc9c;
+                }
+              }
+              input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: invert(100%);
+            }
+            span{
+              font-size: 20px;
+              margin-left: 10px;
+              margin-top: 25px;
+              margin-right: 10px;
+            } 
+            p {
+              font-size: 24px;
+              font-weight: bold;
+              color: #fff;
+              margin-left: 20px;
+              margin-right: 40px;
+            }
+          }
+          p {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            margin-left: 20px;
+          }
+          .ReactApexChart{
+            margin-left: -50px;
+            margin-bottom: -15px;
+            margin-top: -5px;
+          
+          .apexcharts-legend {
+            position: absolute !important;
+            display: flex !important;
+            flex-direction: row !important; /* Hiển thị các item theo hàng ngang */
+            flex-wrap: wrap;
+            gap :5px;
+            top: 100 !important;
+            left: 400px !important;
+            .apexcharts-legend-series {
+              &:last-child {
+                margin-right: 0;
+              }
+
+              .apexcharts-legend-marker {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin-right: 8px;
+              }
+
+              .apexcharts-legend-text {
+                font-size: 20px !important;
+                color: rgb(255, 255, 255) !important;
+              }
+            }
+          }
+        }
+        
+  }
+}
+  .main-bottom{
+    margin-top: 30px;
+    border-radius: 30px;
+  }
+}

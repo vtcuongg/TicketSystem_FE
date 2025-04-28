@@ -1,0 +1,226 @@
+.ticket-table-wrapper {
+  width: 100%;
+  -webkit-overflow-scrolling: touch; /* Kéo mượt trên mobile */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto; /* Chỉ cho phép scroll ngang */
+  overflow-y: visible; /* Quan trọng: KHÔNG khóa chiều cao bảng */
+  background-color: #2f363e;
+  .Table-Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    .show-entries {
+      display: flex;
+      align-items: center;
+      font-size: 22px;
+      margin-top: -25px;
+      span {
+        margin-right: 5px;
+        color: #fff;
+        margin-right: 10px;
+      }
+
+      select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: 10px;
+        color: #fff;
+        font-size: 15px;
+        background-color: rgb(28, 33, 38);
+      }
+    }
+    .Header-Search{
+      display: flex;
+      align-items: center;
+     height: 50px;
+     margin-left: auto;
+     margin-right: 10px;
+     margin-bottom: 20px;
+     position: relative;
+          .search-icon {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #ffffff;
+          font-size: 20px;
+         }
+     
+        .search-input {
+        background: rgb(28, 33, 38);
+        border: none;
+        border-radius: 10px;
+        padding: 8px 30px 8px 15px;
+        color: #ffffff;
+        width :300px;
+        height:30px;
+        font-size: 15px;
+      
+        &::placeholder {
+          color: #b8afaf; 
+          font-size: 15px; 
+              }
+         }
+     }
+  }
+
+  
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #2f363e;
+  color: #fff;
+  font-weight: 400;
+  min-width: 1200px; /* Table rộng hơn form */
+  th{
+    width: auto;
+    font-weight: 900;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #444;
+    text-align: left;
+   
+  }
+
+  th {
+    cursor: pointer;
+    user-select: none;
+  }
+  .description{
+    width:100px;
+  }
+  .status {
+    display: inline-block;
+    padding: 0.4em 0.7em;
+    border-radius: 0.8em;
+    font-weight: 400;
+    color: white;
+    width: 70px;
+    white-space: nowrap; // Ngăn chữ xuống dòng
+    text-align: center;
+    line-height: 1.5em; 
+  }
+  .priority {
+    display: inline-block;
+    padding: 0.4em 0.7em;
+    border-radius: 0.8em;
+    font-size: 0.8em;
+    font-weight: 400;
+    color: white;
+    width: 70px;
+    white-space: nowrap; // Ngăn chữ xuống dòng
+    text-align: center;
+    line-height: 1.5em; 
+
+    &.priority-low {
+      background-color: #5cb85c; /* Màu xanh lá cây */
+    }
+
+    &.priority-medium {
+      background-color: #f0ad4e; /* Màu cam */
+    }
+
+    &.priority-high {
+      background-color: #d9534f; /* Màu đỏ */
+    }
+
+    &.priority-urgent {
+      background-color: #c9302c; /* Màu đỏ đậm hơn */
+    }
+  }
+
+  .action-icons {
+    display: flex;
+    gap: 8px;
+
+    .edit-btn,
+.delete-btn,
+.feedback-btn {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  div {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      color: white;
+      font-size: 1.2em;
+    }
+  }
+
+  &.edit-btn div {
+    background-color: #00c897;
+  }
+
+  &.delete-btn div {
+    background-color: red;
+  }
+
+  &.feedback-btn div {
+    background-color: blue; // Or your desired color
+  }
+}
+  }
+
+  tr:hover {
+    background-color: #3a3f4b;
+  }
+
+}
+.pagination {
+  padding-bottom: 20px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+
+  .pagination-info {
+  }
+
+  .pagination-buttons {
+    display: flex;
+    gap: 8px;
+
+    button {
+      padding: 12px 16px;
+      border-radius: 10px;
+      background-color: #5fd4bf;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+
+      &:hover:not(:disabled) {
+        background-color: #5fd4bf;
+      }
+
+      &.active {
+        background-color: #5fd4bf;
+        color: #fff;
+        border-color: #5fd4bf;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+}

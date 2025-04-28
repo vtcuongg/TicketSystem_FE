@@ -1,6 +1,9 @@
 import NavBar from "./NavBar";
+import React, { useMemo } from 'react';
+import { useTable, useSortBy, useRowSelect } from 'react-table';
 import "../Styles/AllTicket.scss"
-const AllTicket = () => {
+import TicketTable from "./TicketTable";
+const MyTicket = () => {
     return (
         <NavBar title="All Ticket" path="Ticket">
             <div className="main-container">
@@ -13,10 +16,10 @@ const AllTicket = () => {
                     </div>
                 </div>
                 <div className="Main-Inner">
-                    kkkk
+                    <TicketTable />
                 </div>
             </div>
         </NavBar>
     )
 }
-export default AllTicket;
+export default MyTicket;
