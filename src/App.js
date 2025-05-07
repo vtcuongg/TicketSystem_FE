@@ -7,18 +7,24 @@ import CreateTicket from './Views/CreateTicket';
 import UpdateTicket from './Views/UpdateTicket';
 import Report from './Views/Report';
 import RatingTable from './Views/RatingTable';
+import EmployeeTable from './Views/EmployeeTable';
 import MyWork from './Views/MyWork';
+import Employee from './Views/Employee';
+import Chat from './Views/Chat';
 function App() {
   return (
     <div>
       {/* <CreateTicket /> */}
       {/* <UpdateTicket /> */}
       {/* <TicketTable /> */}
-      <Report />
+      {/* <Report /> */}
       {/* <RatingTable /> */}
       {/* <MyTicket /> */}
       {/* <MyWork /> */}
-
+      {/* <EmployeeTable /> */}
+      {/* <Employee /> */}
+      <NavBar />
+      {/* <Chat /> */}
     </div>
   );
 }

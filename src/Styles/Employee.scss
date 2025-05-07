@@ -1,0 +1,60 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+    background-color: #2f363e;
+    .header-main {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #797575;
+        
+        .header-main-left {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .header-main-right {
+            background-color: #00c897;
+            color: white;
+            font-size:20px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #4cd0af;
+            }
+        }
+    }
+    .Main-Inner{
+        flex:5;
+        background-color: #00c897;
+        margin-top: 20px;
+    }
+    ::-webkit-scrollbar {
+        width: 8px; /* Độ rộng thanh cuộn dọc */
+        height: 8px; /* Độ cao thanh cuộn ngang (nếu có) */
+      }
+    
+      ::-webkit-scrollbar-track {
+        background: #2f363e; /* Màu nền track */
+      }
+    
+      ::-webkit-scrollbar-thumb {
+        background: #888; /* Màu cục cuộn */
+        border-radius: 4px;
+      }
+    
+      ::-webkit-scrollbar-thumb:hover {
+        background: #aaa; /* Hover sáng màu hơn tí */
+      }
+}

@@ -154,7 +154,7 @@ const RatingTable = () => {
                     <FaSearch className="search-icon" />
                 </div>
             </div>
-            <table {...getTableProps()} className="ticket-table">
+            <table {...getTableProps()} className="Rating-table">
                 <thead>
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>

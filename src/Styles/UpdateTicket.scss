@@ -40,7 +40,6 @@
                   border-color: #1abc9c;
                 }
               }
-              /* Thử làm trắng biểu tượng date picker (chỉ hoạt động trên một số trình duyệt) */
                 input[type="date"]::-webkit-calendar-picker-indicator {
                     filter: invert(100%);
                 }

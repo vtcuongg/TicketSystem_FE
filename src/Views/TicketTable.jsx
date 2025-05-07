@@ -316,11 +316,18 @@ const TicketTable = () => {
     const columns = React.useMemo(
         () => [
             { Header: "TicketID", accessor: "ticketID" },
-            { Header: "Title", accessor: "title" },
+            {
+                Header: "Title", accessor: "title",
+                Cell: ({ value }) => (
+                    <span className="title-line-cell">{value}</span>
+                )
+            },
             {
                 Header: "Description",
                 accessor: "description",
-                width: 500
+                Cell: ({ value }) => (
+                    <span className="description-line-cell">{value}</span>
+                )
             },
             {
                 Header: "Priority",
@@ -515,48 +522,50 @@ const TicketTable = () => {
                     <FaSearch className="search-icon" />
                 </div>
             </div>
-            <table {...getTableProps()} className="ticket-table">
-                <thead>
-                    {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                                    style={{ width: column.width ? column.width : 'auto' }}
-                                >
-                                    {column.render("Header")}
-                                    <span>
-                                        {column.isSorted ? (
-                                            column.isSortedDesc ? (
-                                                <span style={{ fontWeight: 'bold' }}> ▲</span>
+            <div className="Ticket-table-container">
+                <table {...getTableProps()} className="ticket-table">
+                    <thead>
+                        {headerGroups.map((headerGroup) => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map((column) => (
+                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                                        style={{ width: column.width ? column.width : 'auto' }}
+                                    >
+                                        {column.render("Header")}
+                                        <span>
+                                            {column.isSorted ? (
+                                                column.isSortedDesc ? (
+                                                    <span style={{ fontWeight: 'bold' }}> ▲</span>
+                                                ) : (
+                                                    <span style={{ fontWeight: 'bold' }}> ▼</span>
+                                                )
                                             ) : (
-                                                <span style={{ fontWeight: 'bold' }}> ▼</span>
-                                            )
-                                        ) : (
-                                            <>
-                                                {" "}
-                                                <span style={{ opacity: 0.5 }}>▼</span>
-                                                <span style={{ opacity: 0.5 }}>▲</span>
-                                            </>
-                                        )}
-                                    </span>
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                    {rows.map((row) => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => (
-                                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                                <>
+                                                    {" "}
+                                                    <span style={{ opacity: 0.5 }}>▼</span>
+                                                    <span style={{ opacity: 0.5 }}>▲</span>
+                                                </>
+                                            )}
+                                        </span>
+                                    </th>
                                 ))}
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                        ))}
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                        {rows.map((row) => {
+                            prepareRow(row);
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {row.cells.map((cell) => (
+                                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                    ))}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
             {pageCount >= 1 && (
                 <div className="pagination">
                     <div className="pagination-info">
