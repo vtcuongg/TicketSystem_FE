@@ -1,65 +1,60 @@
 import NavBar from "./NavBar";
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import "../Styles/Report.scss"
 import ReactApexChart from 'react-apexcharts';
 import RatingTable from "./RatingTable";
+import { jwtDecode } from 'jwt-decode';
+import { useGetSummaryUserByDepartmentQuery, useGetSummaryTicketQuery, useLazyGetSummaryTicketQuery } from '../Services/reportApi';
+import { FaChartPie } from 'react-icons/fa';
+
 const Report = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const employeeData = {
-        "totalUsers": 5,
-        "statusCounts": [
-            {
-                "status": "Active",
-                "userCount": 3
-            },
-            {
-                "status": "InActive",
-                "userCount": 2
+    const today = new Date();
+    useEffect(() => {
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        firstDay.setHours(0, 0, 0, 0);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        lastDay.setHours(0, 0, 0, 0);
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        setStartDate(formatDate(firstDay));
+        setEndDate(formatDate(lastDay));
+    }, []);
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        const storedUser = localStorage.getItem('user');
+        if (token && storedUser) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const currentTime = Date.now() / 1000;
+
+                if (decodedToken.exp > currentTime) {
+                    setUser(JSON.parse(storedUser));
+                } else {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('user');
+                }
+            } catch (err) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
             }
-        ]
-    }
-    const ticketData = {
-        "totalTicket": 11,
-        "ticketSummary": [
-            {
-                "status": "Cháy Deadline",
-                "ticketCount": 1,
-                "ticketYear": 2025,
-                "ticketMonth": 4
-            },
-            {
-                "status": "Chờ xác nhận",
-                "ticketCount": 1,
-                "ticketYear": 2025,
-                "ticketMonth": 4
-            },
-            {
-                "status": "Đã hủy",
-                "ticketCount": 1,
-                "ticketYear": 2025,
-                "ticketMonth": 4
-            },
-            {
-                "status": "Đang xử lý",
-                "ticketCount": 3,
-                "ticketYear": 2025,
-                "ticketMonth": 4
-            },
-            {
-                "status": "Hoàn thành",
-                "ticketCount": 1,
-                "ticketYear": 2025,
-                "ticketMonth": 4
-            },
-            {
-                "status": "Mới",
-                "ticketCount": 4,
-                "ticketYear": 2025,
-                "ticketMonth": 4
-            }
-        ]
-    };
+        }
+    }, []);
+    const { data: dataEmployee, isLoading, error } = useGetSummaryUserByDepartmentQuery(user?.departmentID);
+    const { data: ticketData, isLoading: isLoadingdataTicket, error: errordataTicket } = useGetSummaryTicketQuery({
+        startDate: startDate,
+        endDate: endDate,
+        departmentId: 4,
+    });
+
     const statusColorMap = {
         "Mới": "#FFA500",
         "Đang xử lý": "#008000",
@@ -72,41 +67,12 @@ const Report = () => {
         "Active": "#008000",
         "InActive": "#FFA500"
     };
-    const { ticketSummary } = ticketData;
-    const { statusCounts } = employeeData;
 
-    const series = ticketSummary.map(item => item.ticketCount);
-    const labels = ticketSummary.map(item => item.status);
-    const colors = ticketSummary.map(item => statusColorMap[item.status] || '#808080');
 
+    const statusCounts = dataEmployee?.statusCounts ?? [];
     const series_employee = statusCounts.map(item => item.userCount);
     const labels_employee = statusCounts.map(item => item.status);
     const colors_employee = statusCounts.map(item => statusEmployeeColorMap[item.status] || '#808080');
-
-    const chartOptions = {
-        chart: {
-            type: 'donut',
-        },
-        labels: labels,
-        colors: colors,
-        legend: {
-            position: 'right',
-            offsetY: 0,
-            offsetX: 10
-
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }]
-    };
     const chartEmployeeOptions = {
         chart: {
             type: 'donut',
@@ -131,51 +97,79 @@ const Report = () => {
             }
         }]
     };
+    const { ticketSummary } = ticketData ?? [];
+
+    const series = ticketSummary?.map(item => item.ticketCount);
+    const labels = ticketSummary?.map(item => item.status);
+    const colors = ticketSummary?.map(item => statusColorMap[item.status] || '#808080');
+    const chartOptions = useMemo(() => ({
+        chart: { type: 'donut' },
+        labels: labels,
+        colors: colors,
+        legend: {
+            position: 'right',
+            offsetY: 0,
+            offsetX: 10,
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: { width: 200 },
+                legend: { position: 'bottom' },
+            },
+        }],
+    }), [labels, colors]);
+
+    const chartSeries = useMemo(() => {
+        return Array.isArray(series) ? [...series] : [];
+    }, [series]);
 
 
-    const chartSeries = series;
-    const chartEmployeeSeries = series_employee;
-    return (
-        <NavBar title="Report" showHeaderLink={false} >
-            <div className="report-main-container">
-                <div className="main-top">
-                    <div className="main-top-employee">
-                        <div className="main-top-employee-title">
-                            <p>
-                                Employees
-                            </p>
+    if (dataEmployee && ticketData) {
+        return (
+            <NavBar title="Report" showHeaderLink={false} >
+                <div className="report-main-container">
+                    <div className="main-top">
+                        <div className="main-top-employee">
+                            <div className="main-top-employee-title">
+                                <p>
+                                    Employees
+                                </p>
+                            </div>
+                            <ReactApexChart className="ReactApexChart" options={chartEmployeeOptions} series={series_employee} type="donut" height={240} />
+                            <p >Tổng số Employee: {dataEmployee?.totalUsers}</p>
                         </div>
-                        <ReactApexChart className="ReactApexChart" options={chartEmployeeOptions} series={series_employee} type="donut" height={240} />
-                        <p >Tổng số Employee: {employeeData.totalUsers}</p>
+                        <div className="main-top-ticket">
+                            <div className="main-top-ticket-title">
+                                <p>
+                                    Tickets
+                                </p>
+                                <input
+                                    type="date"
+                                    id="StartDate"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                                <span>~</span>
+                                <input
+                                    type="date"
+                                    id="EndDate"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                            </div>
+                            <ReactApexChart
+                                key={JSON.stringify(chartSeries)}
+                                className="ReactApexChart" options={chartOptions} series={chartSeries} type="donut" height={240} />
+                            <p >Tổng số tickets: {ticketData.totalTicket}</p>
+                        </div>
                     </div>
-                    <div className="main-top-ticket">
-                        <div className="main-top-ticket-title">
-                            <p>
-                                Tickets
-                            </p>
-                            <input
-                                type="date"
-                                id="StartDate"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                            />
-                            <span>~</span>
-                            <input
-                                type="date"
-                                id="EndDate"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                            />
-                        </div>
-                        <ReactApexChart className="ReactApexChart" options={chartOptions} series={chartSeries} type="donut" height={240} />
-                        <p >Tổng số tickets: {ticketData.totalTicket}</p>
+                    <div className="main-bottom">
+                        < RatingTable />
                     </div>
                 </div>
-                <div className="main-bottom">
-                    < RatingTable />
-                </div>
-            </div>
-        </NavBar>
-    )
+            </NavBar>
+        )
+    }
 }
 export default Report;

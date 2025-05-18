@@ -1,140 +1,85 @@
-import React, { useState, useMemo } from "react";
-import { useTable, useSortBy } from "react-table";
+import React, { useState, useMemo, useEffect } from "react";
+import { useTable, useSortBy, useRowSelect } from "react-table";
 import "../Styles/EmployeeTable.scss";
 import avatar from "../assets/Images/avatar-df.png"
 import { FaSearch } from 'react-icons/fa';
+import { jwtDecode } from 'jwt-decode';
+import { useGetUsersByDepartmentQuery } from "../Services/userApi";
+import { useGetTicketsQuery } from '../Services/ticketApi';
+const EmployeeTable = ({ onRowSelect }) => {
 
-const EmployeeTable = () => {
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef()
+            const resolvedRef = ref || defaultRef
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate
+            }, [resolvedRef, indeterminate])
+
+            return (
+                <>
+                    <input className="checkbox" type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            )
+        }
+    )
+
     const [searchTerm, setSearchTerm] = useState("");
-    const [pageSize, setPageSize] = useState(5); // Số lượng ticket hiển thị trên mỗi trang
-    const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+    const [pageSize, setPageSize] = useState(5);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        const storedUser = localStorage.getItem('user');
 
-    const data = React.useMemo(
-        () => [
-            {
-                "id": 2,
-                "userName": "KKK",
-                "email": "user@example.com",
-                "phoneNumber": "0390278385",
-                "dateOfBirth": "2025-04-07T03:15:59.258",
-                "gender": "Nam",
-                "address": "DN",
-                "avatar": avatar,
-                "nationalID": "160254076853",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo",
-                "roleID": 2,
-                "roleName": "User",
-                "status": "Active",
-                "createdAt": "2025-04-07T03:15:59.258"
-            },
-            {
-                "id": 6,
-                "userName": "Nguyễn Việt Cường",
-                "email": "tranthib@example.com",
-                "phoneNumber": "0912345678",
-                "dateOfBirth": "1995-08-15T00:00:00",
-                "gender": "Nữ",
-                "address": "H? Chí Minh, Vi?t Nam",
-                "avatar": avatar,
-                "nationalID": "987654321",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo",
-                "roleID": 2,
-                "roleName": "User",
-                "status": "InActive",
-                "createdAt": "2025-04-07T10:34:48.9496128"
-            },
-            {
-                "id": 7,
-                "userName": "Lê Công Đạt",
-                "email": "phamvanc@example.com",
-                "phoneNumber": "0934567890",
-                "dateOfBirth": "1988-12-20T00:00:00",
-                "gender": "Nam",
-                "address": "Ðà N?ng, Vi?t Nam",
-                "avatar": avatar,
-                "nationalID": "567890123",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo",
-                "roleID": 2,
-                "roleName": "User",
-                "status": "InActive",
-                "createdAt": "2025-04-07T10:34:48.9496128"
-            },
-            {
-                "id": 8,
-                "userName": "Lê Th? D",
-                "email": "lethid@example.com",
-                "phoneNumber": "0976543210",
-                "dateOfBirth": "1993-07-25T00:00:00",
-                "gender": "Nam",
-                "address": "C?n Tho, Vi?t Nam",
-                "avatar": avatar,
-                "nationalID": "654321987",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo",
-                "roleID": 2,
-                "roleName": "User",
-                "status": "Active",
-                "createdAt": "2025-04-07T10:34:48.9496128"
-            },
-            {
-                "id": 11,
-                "userName": "Ð?ngVanG",
-                "email": "dangvang@example.com",
-                "phoneNumber": "0923456789",
-                "dateOfBirth": "1992-09-30T00:00:00",
-                "gender": "Nam",
-                "address": "Nha Trang, Vi?t Nam",
-                "avatar": null,
-                "nationalID": "456789321",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo",
-                "roleID": 4,
-                "roleName": "Employee",
-                "status": "Active",
-                "createdAt": "2025-04-07T10:34:48.9496128"
+        if (token && storedUser) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const currentTime = Date.now() / 1000;
+
+                if (decodedToken.exp > currentTime) {
+                    setUser(JSON.parse(storedUser));
+                } else {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('user');
+                }
+            } catch (err) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
             }
-        ], []
-    );
-    // Xử lý filter dữ liệu
+        }
+    }, []);
+    const { data, isLoading, error } = useGetUsersByDepartmentQuery(user?.departmentID);
     const filteredData = React.useMemo(() => {
-        if (!searchTerm) return data;
-
-        return data.filter((user) => {
+        if (!data?.data) return [];
+        if (!searchTerm) return data?.data;
+        return data?.data.filter((user) => {
             const userName = user.userName?.toLowerCase().includes(searchTerm.toLowerCase());
             const Email = user.email?.toLowerCase().includes(searchTerm.toLowerCase());
             return userName || Email;
         });
-    }, [searchTerm, data]);
-    // Tính toán số lượng trang
-    const pageCount = Math.ceil(filteredData.length / pageSize);
-
-    // Lấy dữ liệu cho trang hiện tại
+    }, [searchTerm, data?.data]);
+    const pageCount = Math.ceil(filteredData?.length / pageSize);
     const currentPageData = React.useMemo(() => {
         const startIndex = currentPage * pageSize;
         return filteredData.slice(startIndex, startIndex + pageSize);
     }, [currentPage, pageSize, filteredData]);
-    // Hàm xử lý thay đổi số lượng item trên trang
     const handlePageSizeChange = (event) => {
         setPageSize(Number(event.target.value));
-        setCurrentPage(0); // Reset về trang đầu tiên khi thay đổi pageSize
+        setCurrentPage(0);
     };
 
-    // Hàm xử lý chuyển trang
     const gotoPage = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
 
-    // Hàm xử lý chuyển đến trang trước
     const previousPage = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1);
         }
     };
 
-    // Hàm xử lý chuyển đến trang sau
     const nextPage = () => {
         if (currentPage < pageCount - 1) {
             setCurrentPage(currentPage + 1);
@@ -142,6 +87,19 @@ const EmployeeTable = () => {
     };
     const columns = useMemo(
         () => [
+            {
+                id: 'selection',
+                Header: ({ getToggleAllRowsSelectedProps }) => (
+                    <div>
+                        <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                    </div>
+                ),
+                Cell: ({ row }) => (
+                    <div>
+                        <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                    </div>
+                ),
+            },
             {
                 Header: "Họ và tên", accessor: "userName",
                 Cell: ({ value }) => (
@@ -207,14 +165,24 @@ const EmployeeTable = () => {
                         year: '2-digit',
                     });
                 },
-            }
+            },
         ],
         []
     );
-
-    const tableInstance = useTable({ columns, data: currentPageData }, useSortBy);
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    const tableInstance = useTable({
+        columns, data: currentPageData,
+        getRowId: (row) => row.id,
+    }, useSortBy, useRowSelect);
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state: { selectedRowIds }, toggleAllRowsSelected } =
         tableInstance;
+    useEffect(() => {
+        if (onRowSelect && selectedRowIds) {
+            const selectedIdsArray = rows
+                .filter(row => selectedRowIds[row.id])
+                .map(row => row.original.id);
+            onRowSelect(selectedIdsArray);
+        }
+    }, [selectedRowIds]);
     const renderPageNumbers = useMemo(() => {
         const pageNumbers = [];
         for (let i = 0; i < pageCount; i++) {
@@ -230,94 +198,99 @@ const EmployeeTable = () => {
         }
         return pageNumbers;
     }, [currentPage, pageCount, gotoPage]);
-    return (
-        <div className="Employee-table-wrapper">
-            <div className="Table-Header">
-                <div className="show-entries">
-                    <span>Show</span>
-                    <select value={pageSize} onChange={handlePageSizeChange}>
-                        <option value={5}>5</option>
-                        <option value={8}>8</option>
-                        <option value={10}>10</option>
-                        <option value={15}>15</option>
-                    </select>
-                    <span>entries</span>
+
+    if (data?.data) {
+        return (
+            <div className="Employee-table-wrapper">
+                <div className="Table-Header">
+                    <div className="show-entries">
+                        <span>Show</span>
+                        <select value={pageSize} onChange={handlePageSizeChange}>
+                            <option value={5}>5</option>
+                            <option value={8}>8</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div className="Header-Search">
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm theo tên , email"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                        <FaSearch className="search-icon" />
+                    </div>
                 </div>
-                <div className="Header-Search">
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm theo tên , email"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="search-input"
-                    />
-                    <FaSearch className="search-icon" />
-                </div>
-            </div>
-            <div className="Employee-table-container">
-                <table {...getTableProps()} className="Employee-table">
-                    <thead>
-                        {headerGroups.map((headerGroup) => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map((column) => (
-                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                                        style={{ width: column.width ? column.width : 'auto', whiteSpace: "nowrap" }}
-                                    >
-                                        <span style={{ marginRight: "60px" }}>
-                                            {column.render("Header")}
-                                            {column.isSorted ? (
-                                                column.isSortedDesc ? (
-                                                    <span style={{ fontWeight: 'bold' }}> ▲</span>
-                                                ) : (
-                                                    <span style={{ fontWeight: 'bold' }}> ▼</span>
+                <div className="Employee-table-container">
+                    <table {...getTableProps()} className="Employee-table">
+                        <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map((column) => (
+                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                                            style={{ width: column.width ? column.width : 'auto', whiteSpace: "nowrap" }}
+                                        >
+                                            <span style={{ marginRight: "60px" }}>
+                                                {column.render("Header")}
+                                                {column.id !== 'selection' && column.isSorted ? (
+                                                    column.isSortedDesc ? (
+                                                        <span style={{ fontWeight: 'bold' }}> ▲</span>
+                                                    ) : (
+                                                        <span style={{ fontWeight: 'bold' }}> ▼</span>
+                                                    )
+                                                ) : (column.id !== 'selection' && (
+                                                    <>
+                                                        {" "}
+                                                        <span style={{ opacity: 0.5 }}>▼</span>
+                                                        <span style={{ opacity: 0.5 }}>▲</span>
+                                                    </>
                                                 )
-                                            ) : (
-                                                <>
-                                                    {" "}
-                                                    <span style={{ opacity: 0.5 }}>▼</span>
-                                                    <span style={{ opacity: 0.5 }}>▲</span>
-                                                </>
-                                            )}
-                                        </span>
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map((cell) => (
-                                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                                )}
+                                            </span>
+                                        </th>
                                     ))}
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-            {pageCount >= 1 && (
-                <div className="pagination">
-                    <div className="pagination-info">
-                        Showing {currentPage * pageSize + 1} to{" "}
-                        {Math.min((currentPage + 1) * pageSize, filteredData.length)} of{" "}
-                        {filteredData.length} entries
-                    </div>
-                    <div className="pagination-buttons">
-                        <button onClick={previousPage} disabled={currentPage === 0}>
-                            Previous
-                        </button>
-                        {renderPageNumbers}
-                        <button onClick={nextPage} disabled={currentPage === pageCount - 1}>
-                            Next
-                        </button>
-                    </div>
+                            ))}
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                            {rows.map((row) => {
+                                prepareRow(row);
+                                return (
+                                    <tr {...row.getRowProps()}>
+                                        {row.cells.map((cell) => (
+                                            <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                        ))}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
-            )}
-        </div>
-    );
+                {pageCount >= 1 && (
+                    <div className="pagination">
+                        <div className="pagination-info">
+                            Showing {currentPage * pageSize + 1} to{" "}
+                            {Math.min((currentPage + 1) * pageSize, filteredData.length)} of{" "}
+                            {filteredData.length} entries
+                        </div>
+                        <div className="pagination-buttons">
+                            <button onClick={previousPage} disabled={currentPage === 0}>
+                                Previous
+                            </button>
+                            {renderPageNumbers}
+                            <button onClick={nextPage} disabled={currentPage === pageCount - 1}>
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
 };
 
 export default EmployeeTable;

@@ -1,10 +1,23 @@
 import NavBar from "./NavBar";
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import "../Styles/UpdateTicket.scss"
 import { Editor } from '@tinymce/tinymce-react';
 import avatar from "../assets/Images/avatar-df.png"
 import Select from 'react-select';
+import { useParams } from 'react-router-dom';
+import { useUpdateTicketMutation, useGetTicketsQuery } from '../Services/ticketApi';
+import { useGetDepartmentsQuery } from '../Services/departmentAPI';
+import { useGetCategoriesByDepartmentQuery } from '../Services/categoryApi';
+import { useGetAllUsersQuery } from "../Services/userApi";
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useLocation } from 'react-router-dom';
+import { useAssignUsersToTicketMutation } from '../Services/ticketAssignmentApi';
+import { jwtDecode } from 'jwt-decode';
 const UpdateTicket = () => {
+    const location = useLocation();
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [ticketId, setTicketId] = useState('');
     const [status, setStatus] = useState('');
@@ -18,18 +31,82 @@ const UpdateTicket = () => {
     const [description, setDescription] = useState('');
     const [attachments, setAttachments] = useState([]);
     const [assignTo, setAssignTo] = useState([]);
-    const categoryOptions = useMemo(() => [
-        { value: 'technical', label: 'Technical Support' },
-        { value: 'billing', label: 'Billing Inquiry' },
-        { value: 'feature', label: 'Feature Request' },
-        { value: 'other', label: 'Other' },
-    ], []);
-    const DepartmentOptions = useMemo(() => [
-        { value: '1', label: 'Technical SupportD' },
-        { value: '2', label: 'Billing InquiryD' },
-        { value: '3', label: 'Feature RequestD' },
-        { value: '4', label: 'OtherD' },
-    ], []);
+    const [formData, setFormData] = useState(null);
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        const storedUser = localStorage.getItem('user');
+
+        if (token && storedUser) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const currentTime = Date.now() / 1000;
+
+                if (decodedToken.exp > currentTime) {
+                    setUser(JSON.parse(storedUser));
+                } else {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('user');
+                }
+            } catch (err) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
+            }
+        }
+    }, []);
+    const { data: dataTicket, isLoading: isLoadingTicket, error: errorTicket, refetch } = useGetTicketsQuery({ TicketId: id });
+    useEffect(() => {
+        refetch()
+    }, [location.pathname]);
+    useEffect(() => {
+        setFormData({
+            ticketID: dataTicket?.[0]?.ticketID,
+            createdBy: dataTicket?.[0]?.createdBy,
+            Title: dataTicket?.[0]?.title,
+            CategoryID: dataTicket?.[0]?.categoryID,
+            DepartmentID: dataTicket?.[0]?.departmentID,
+            Priority: dataTicket?.[0]?.priority,
+            Description: dataTicket?.[0]?.description,
+            Status: dataTicket?.[0]?.status,
+            assingTo: dataTicket?.[0]?.assignedUsers?.map(user => ({
+                value: user.assignedTo,
+                label: user.userName,
+                avatar: user.avatar,
+                userName: user.userName,
+            })) || [],
+            createdAt: dataTicket?.[0]?.createdAt?.slice(0, 10),
+            UpdateAt: new Date().toISOString().slice(0, 10),
+            DueDate: dataTicket?.[0]?.dueDate ? dataTicket[0].dueDate.slice(0, 10) : ''
+
+        })
+    }, [dataTicket])
+
+    const { data: DepartmentOptions, isLoading: isLoadingDepartments, error: departmentError } = useGetDepartmentsQuery();
+    const {
+        data: categoryOptions = [],
+        isLoading: loadingCategories,
+        error: errorCategory
+    } = useGetCategoriesByDepartmentQuery(formData?.DepartmentID, {
+        skip: !formData?.DepartmentID,
+    });
+    const { data: Users, isLoading: isLoadingUserData, error: errorUserData } = useGetAllUsersQuery();
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        const numericFields = ['CategoryId', 'DepartmentId'];
+        const newValue = numericFields.includes(name) ? Number(value) : value;
+        setFormData(prev => ({
+            ...prev,
+            [name]: newValue,
+        }));
+    };
+    const [updateTicket, { isLoading, isSuccess, error }] = useUpdateTicketMutation();
+    const [assignToUser] = useAssignUsersToTicketMutation();
+    const handleEditorChange = (content, editor) => {
+        setFormData(prev => ({
+            ...prev,
+            Description: content,
+        }));
+    };
     const PriorityOptions = useMemo(() => [
         { value: '1', label: 'ThấpThấp' },
         { value: '2', label: 'Trung Bình' },
@@ -45,22 +122,54 @@ const UpdateTicket = () => {
         { value: '5', label: 'Đã hủy' },
         { value: '6', label: 'Cháy Deadline' },
     ], []);
-    const Users = useMemo(() => [
-        { Id: '1', Name: 'Nguyen Viet Cuong', Avatar: avatar },
-        { Id: '2', Name: 'BBBBBBBBB', Avatar: avatar },
-        { Id: '3', Name: 'CCCCCCCCC', Avatar: avatar },
-        { Id: '4', Name: 'DDDDDDDDD', Avatar: avatar },
-    ], []);
-    const handleEditorChange = (content, editor) => {
-        setDescription(content);
-    };
+
+    useEffect(() => {
+        setAttachments(dataTicket?.[0]?.attachments)
+    }, [dataTicket]);
 
     const handleAttachmentChange = (event) => {
         setAttachments([...attachments, ...event.target.files]);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        const submitData = new FormData();
+        submitData.append("ticketID", formData.ticketID);
+        submitData.append("createdBy", formData.createdBy);
+        submitData.append("title", formData.Title);
+        submitData.append("categoryID", formData.CategoryID);
+        submitData.append("departmentID", formData.DepartmentID);
+        submitData.append("priority", formData.Priority);
+        submitData.append("description", formData.Description);
+        submitData.append("status", formData.Status);
+        submitData.append("createdAt", formData.createdAt);
+        submitData.append("updatedAt", formData.UpdateAt);
+        submitData.append("dueDate", formData.DueDate);
+        attachments.forEach((file, index) => {
+            submitData.append(`attachments`, file);
+        });
+
+        try {
+            await updateTicket(submitData).unwrap();
+            const assignedUserIds = formData.assingTo.map(user => user.value);
+            const assignPayload = {
+                ticketID: formData.ticketID,
+                assignedToList: assignedUserIds
+            };
+            await assignToUser(assignPayload).unwrap();
+
+            Swal.fire(
+                'Thành công!',
+                'Ticket đã được cập nhật thành công.',
+                'success'
+            );
+            navigate('/my-ticket')
+        } catch (err) {
+            console.error("Chi tiết lỗi:", err);
+            if (err.data) {
+                console.error("Lỗi chi tiết:", err.data.errors || err.data);
+            }
+        }
 
     };
     const handleRemoveAttachment = (index) => {
@@ -69,248 +178,268 @@ const UpdateTicket = () => {
         setAttachments(newAttachments);
     };
     const handleAssigntToChange = (selectedOptions) => {
-        setAssignTo(selectedOptions || []);
-    };
 
-    const OptionComponent = (props) => (
-        <div
-            className={`${props.className} select__option`} // Đảm bảo className được áp dụng
-            onClick={() => {
-                if (props.selectOption) {
-                    props.selectOption(props.data);
-                }
-            }}
-        >     <img
-                src={props.data.Avatar}
-                alt={props.data.Name}
-                className="user-avatar-option" />
-            <span>{props.data.Name}</span>
-        </div>
-    );
+        setFormData(prev => ({
+            ...prev,
+            assingTo: selectedOptions || []
+        }));
+    };
+    const OptionComponent = (props) => {
+        return (
+            <div
+                className={`${props.className} select__option`} // Đảm bảo className được áp dụng
+                onClick={() => {
+                    if (props.selectOption) {
+                        props.selectOption(props.data);
+                    }
+                }}
+            >     <img
+                    src={props.data.avatar}
+                    alt={props.data.userName}
+                    className="user-avatar-option" />
+                <span>{props.data.userName}</span>
+            </div>
+        )
+    };
     const MultiValueComponent = (props) => (
         <div className={`${props.className} select__multi-value`}>
             <img
-                src={props.data.Avatar}
-                alt={props.data.Name}
+                src={props.data.avatar}
+                alt={props.data.userName}
                 className="user-avatar-multi-value" />
-            <span>{props.data.Name}</span>
+            <span>{props.data.userName}</span>
         </div>
     );
+    if (dataTicket && formData && user) {
+        return (
+            <NavBar title="Update Ticket" path="Ticket">
+                <div className="update-ticket-container">
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="ticketId">TicketID</label>
+                            <input
+                                type="text"
+                                id="ticketId"
+                                placeholder="TicketID"
+                                value={formData?.ticketID}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="title">Title</label>
+                            <input
+                                type="text"
+                                id="title"
+                                name="Title"
+                                placeholder="Title"
+                                value={formData?.Title}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="CreatedBy">CreatedBy</label>
+                            <input
+                                type="text"
+                                id="CreatedBy"
+                                placeholder="CreatedBy"
+                                value={formData?.createdBy}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="assignTo">Assign To</label>
+                            <Select
+                                id="assignTo"
+                                value={formData?.assingTo}
+                                onChange={handleAssigntToChange}
+                                isMulti
+                                options={Users?.data.users.map(user => ({
+                                    value: user.id,
+                                    label: user.userName,
+                                    avatar: user.avatar,
+                                    userName: user.userName
+                                }))}
+                                getOptionLabel={(option) => option.label}
+                                getOptionValue={(option) => option.value}
+                                components={{ Option: OptionComponent, MultiValueLabel: MultiValueComponent }}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                isDisabled={user?.roleName !== "Manager"}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="Department">Department</label>
+                            <select
+                                id="Department"
+                                name="DepartmentID"
+                                value={formData?.DepartmentID}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select a Department</option>
+                                {DepartmentOptions?.data.map((option) => (
+                                    <option key={option.departmentID} value={option.departmentID}>
+                                        {option.departmentName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="category"> Category</label>
+                            <select
+                                id="category"
+                                name="CategoryID"
+                                value={formData?.CategoryID}
+                                onChange={handleChange}
+                                required
+                                disabled={!formData?.DepartmentID}
+                            >
+                                <option value="">Select a category</option>
+                                {categoryOptions?.map((option) => (
+                                    <option key={option.catgoryID} value={option.categoryID}>
+                                        {option.categoryName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="Priority">Priority</label>
+                            <select
+                                id="Priority"
+                                name="Priority"
+                                value={formData?.Priority}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select a Priority</option>
+                                {PriorityOptions.map((option) => (
+                                    <option key={option.label} value={option.label}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="Status">Status</label>
+                            <select
+                                id="Status"
+                                name="Status"
+                                value={formData?.Status}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select a Status</option>
+                                {StatusOptions.map((option) => (
+                                    <option key={option.label} value={option.label}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="CreatedAt">CreatedAt</label>
+                            <input
+                                type="date"
+                                id="CreatedAt"
+                                name="createdAt"
+                                value={formData?.createdAt}
+                                onChange={handleChange}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="UpdateAt">UpdateAt</label>
+                            <input
+                                type="date"
+                                id="UpdateAt"
+                                name="UpdateAt"
+                                value={formData?.UpdateAt}
+                                onChange={handleChange}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="DueDate">DueDate</label>
+                            <input
+                                type="date"
+                                id="DueDate"
+                                name="DueDate"
+                                value={formData?.DueDate}
+                                onChange={handleChange}
 
-    return (
-        <NavBar title="Update Ticket" path="Ticket">
-            <div className="update-ticket-container">
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="ticketId">TicketID</label>
-                        <input
-                            type="text"
-                            id="ticketId"
-                            placeholder="TicketID"
-                            value={ticketId}
-                            onChange={(e) => setTicketId(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="title">Title</label>
-                        <input
-                            type="text"
-                            id="title"
-                            placeholder="Title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="CreatedBy">CreatedBy</label>
-                        <input
-                            type="text"
-                            id="CreatedBy"
-                            placeholder="CreatedBy"
-                            value={createdBy}
-                            onChange={(e) => setCreatedBy(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="assignTo">Assign To</label>
-                        <Select
-                            id="assignTo"
-                            value={assignTo}
-                            onChange={handleAssigntToChange}
-                            isMulti
-                            options={Users.map(user => ({ value: user.Id, label: user.Name, ...user }))}
-                            getOptionLabel={(option) => option.label}
-                            getOptionValue={(option) => option.value}
-                            components={{ Option: OptionComponent, MultiValueLabel: MultiValueComponent }}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="Department">Department</label>
-                        <select
-                            id="Department"
-                            value={department}
-                            onChange={(e) => setDepartment(e.target.value)}
-                            required
-                        >
-                            <option value="">Select a Department</option>
-                            {DepartmentOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="category"> Category</label>
-                        <select
-                            id="category"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            required
-                            disabled={!department}
-                        >
-                            <option value="">Select a category</option>
-                            {categoryOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="Priority">Priority</label>
-                        <select
-                            id="Priority"
-                            value={Priority}
-                            onChange={(e) => setPriority(e.target.value)}
-                            required
-                        >
-                            <option value="">Select a Priority</option>
-                            {PriorityOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="Status">Status</label>
-                        <select
-                            id="Status"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            required
-                        >
-                            <option value="">Select a Status</option>
-                            {StatusOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="CreatedAt">CreatedAt</label>
-                        <input
-                            type="date"
-                            id="CreatedAt"
-                            value={CreatedAt}
-                            onChange={(e) => setCreatedAt(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="UpdateAt">UpdateAt</label>
-                        <input
-                            type="date"
-                            id="UpdateAt"
-                            value={UpdateAt}
-                            onChange={(e) => setUpdateAt(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="DueDate">DueDate</label>
-                        <input
-                            type="date"
-                            id="DueDate"
-                            value={DueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="description">Ticket Description</label>
-                        <Editor
-                            apiKey="bn972j3oqquoc6n2870a4qxvsrmz16es2n5pgp2ny2lbsluk" // Replace with your TinyMCE API key
-                            value={description}
-                            onEditorChange={handleEditorChange}
-                            init={{
-                                menubar: false,
-                                plugins: [
-                                    'advlist autolink lists link image charmap print preview anchor',
-                                    'searchreplace visualblocks code fullscreen',
-                                    'insertdatetime media table paste code help wordcount',
-                                    'textcolor',
-                                    'heading',
-                                    'fontselect',
-                                    'formatselect'
-                                ],
-                                toolbar: 'heading | formatselect |undo redo | ' +
-                                    'bold italic backcolor | alignleft aligncenter ' +
-                                    'alignright alignjustify | bullist numlist outdent indent | ' +
-                                    'removeformat | help',
-                                content_style: `
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="description">Ticket Description</label>
+                            <Editor
+                                apiKey="bn972j3oqquoc6n2870a4qxvsrmz16es2n5pgp2ny2lbsluk" // Replace with your TinyMCE API key
+                                value={formData?.Description}
+                                onEditorChange={handleEditorChange}
+                                init={{
+                                    menubar: false,
+                                    plugins: [
+                                        'advlist autolink lists link image charmap print preview anchor',
+                                        'searchreplace visualblocks code fullscreen',
+                                        'insertdatetime media table paste code help wordcount',
+                                        'textcolor',
+                                        'heading',
+                                        'fontselect',
+                                        'formatselect'
+                                    ],
+                                    toolbar: 'heading | formatselect |undo redo | ' +
+                                        'bold italic backcolor | alignleft aligncenter ' +
+                                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                                        'removeformat | help',
+                                    content_style: `
                                     body { 
                                       font-family: Helvetica, Arial, sans-serif; 
                                       font-size: 14px; 
                                       color: white; 
                                     }
                                   `,
-                                statusbar: false,
-                            }}
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="attachment">Attachment</label>
-                        <div className="file-upload-container">
-                            <input
-                                type="file"
-                                id="attachment"
-                                multiple
-                                onChange={handleAttachmentChange}
-                                className="file-upload-input"
+                                    statusbar: false,
+                                }}
                             />
-                            <div className="file-drop-area">
-                                Drop files here to upload
-                            </div>
-                            {attachments.length > 0 && (
-                                <div className="attachments-preview">
-                                    <div className="attachments-list"> {/* Sử dụng div để chứa các thẻ */}
-                                        {Array.from(attachments).map((file, index) => (
-                                            <div key={file.name} className="attachment-item">
-                                                <span>{file.name}</span>
-                                                <button type="button" className="remove-attachment" onClick={() => handleRemoveAttachment(index)}>
-                                                    X
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
                         </div>
-                    </div>
 
-                    <button type="submit" className="submit-button">
-                        Submit
-                    </button>
-                </form>
-            </div>
-        </NavBar>
-    )
+                        <div className="form-group">
+                            <label htmlFor="attachment">Attachment</label>
+                            <div className="file-upload-container">
+                                <input
+                                    type="file"
+                                    id="attachment"
+                                    multiple
+                                    onChange={handleAttachmentChange}
+                                    className="file-upload-input"
+                                />
+                                <div className="file-drop-area">
+                                    Drop files here to upload
+                                </div>
+                                {attachments?.length > 0 && (
+                                    <div className="attachments-preview">
+                                        <div className="attachments-list"> {/* Sử dụng div để chứa các thẻ */}
+                                            {Array.from(attachments).map((file, index) => (
+                                                <div key={file.fileName ? file.fileName : file.name} className="attachment-item">
+                                                    <span>{file.fileName ? file.fileName : file.name}</span>
+                                                    <button type="button" className="remove-attachment" onClick={() => handleRemoveAttachment(index)}>
+                                                        X
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <button type="submit" className="submit-button">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+            </NavBar>
+        )
+    }
 }
 export default UpdateTicket;

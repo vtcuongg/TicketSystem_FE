@@ -42,7 +42,7 @@
                 }
             &.collapsed {
                  transition: all 0.9s ease;
-                 flex: 0.2;
+                 flex: 0.35;
                 .logo {
                    margin-left: 10px;
                    padding-right: 10px;
@@ -145,8 +145,8 @@
                                 right:-23   0px;
                                 background-color:  #2f363e;
                                 border: 2px solid #565e68;
-                                height: 580px;
-                                z-index: 100;
+                                height: 550px;
+                                z-index: 1000;
                                 .chat-search-bar {
                                     position: relative;
                                     padding: 15px;
@@ -250,6 +250,11 @@
                                 z-index: 1000;
                                 margin-right: 10px;
                                 border-radius: 10px;
+                                .empty-chat-message{
+                                    color: #fff;
+                                    font-size: 18px;
+                                    margin-left: 20px;
+                                }
                     
                             }
                             }
@@ -393,7 +398,7 @@
                             height: 90%;
                             border-radius: 20%;
                             object-fit: cover;
-                            margin-left: -10px; 
+                            margin-left: 10px; 
                         }
                   
                         .user-name {
@@ -446,7 +451,7 @@
            
             &.collapsed {
                 transition: all 0.9s ease;
-                flex:0.2;
+                flex:0.35;
                 .sidebar-menu{
                     .sidebar-item{
                         .sidebar-link {
@@ -455,7 +460,7 @@
                                 font-size: 24px;
                             }
                             &:hover {
-                                background-image: linear-gradient(to right,#2f363e , #12997e); // Nhạt sang đậm khi hover
+                                background-image: linear-gradient(to right,#2f363e , #12997e); 
                                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
                                 border-right: 0px;
                             }
@@ -541,7 +546,7 @@
                             border-radius: 10px;
                             padding: 3px 7px;
                             font-size: 12px;
-                            margin-left: 10px; /* Đẩy badge sang phải */
+                            margin-left: 10px; 
                             text-align: center;
                             margin-bottom: -3px;
                         }
@@ -552,7 +557,7 @@
                         }
           
                         &:hover {
-                            background-image: linear-gradient(to right,#2f363e , #12997e); // Nhạt sang đậm khi hover
+                            background-image: linear-gradient(to right,#2f363e , #12997e); 
                             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
                             border-right: 10px solid #00ffcc; 
                             border-top-right-radius: 10px;
@@ -560,9 +565,9 @@
                             border-right-style: groove;
                         }
                         &.Click{
-                            background-image: linear-gradient(to right,#2f363e , #12997e); // Nhạt sang đậm khi hover
+                            background-image: linear-gradient(to right,#2f363e , #12997e); 
                             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-                            border-right: 10px solid #00ffcc; 
+                             border-right: 10px solid #00ffcc; 
                             border-top-right-radius: 10px;
                             border-bottom-right-radius: 10px;
                             border-right-style: groove; 
@@ -654,6 +659,7 @@
         margin-left: 20px;
         border-radius: 20px;
         border: 2px solid #565e68;
+        z-index: 1000;
         .chat-header {
             background-color: #2f363e;
             padding: 10px 15px;
@@ -691,11 +697,10 @@
                 width: 16px;
                 height: 16px;
                 border-radius: 50%;
-                border: 2px solid #fff; /* White border for better visibility */
+                border: 2px solid #fff; 
                 background-color: #515251;
-                // visibility: hidden;
                 &.online {
-                background-color: #4caf50; /* Green color for online */
+                background-color: #4caf50; 
                 visibility: inherit;
                 }
                 }
@@ -928,7 +933,6 @@
             .send-button svg {
                 fill: #f1f5f9;
             }
-            // flex-grow: 1;
             display: flex;
             align-items: center;
             border-radius: 20px;

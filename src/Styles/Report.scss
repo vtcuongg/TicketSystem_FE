@@ -73,7 +73,6 @@
           background-color: #2f363e;
           border-radius: 20px;
           margin-bottom: 20px;
-          // flex-grow: 1;
           width: 800px;
           margin-left: auto;
           .main-top-ticket-title {
@@ -98,6 +97,12 @@
               }
               input[type="date"]::-webkit-calendar-picker-indicator {
                 filter: invert(100%);
+            }
+            .icon{
+              font-size: 30px;
+              margin-top: 25px;
+              margin-left: 20px;
+              cursor: pointer;
             }
             span{
               font-size: 20px;

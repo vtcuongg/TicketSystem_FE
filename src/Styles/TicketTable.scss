@@ -115,6 +115,9 @@
       text-overflow: ellipsis;
       min-width: 300px
     }
+    .checkbox{
+      transform: scale(1.5); 
+    }
     .status {
       display: inline-block;
       padding: 0.4em 0.7em;
@@ -122,7 +125,7 @@
       font-weight: 400;
       color: white;
       width: 70px;
-      white-space: nowrap; // Ngăn chữ xuống dòng
+      white-space: nowrap; 
       text-align: center;
       line-height: 1.5em; 
     }
@@ -134,24 +137,24 @@
       font-weight: 400;
       color: white;
       width: 70px;
-      white-space: nowrap; // Ngăn chữ xuống dòng
+      white-space: nowrap; 
       text-align: center;
       line-height: 1.5em; 
   
       &.priority-low {
-        background-color: #5cb85c; /* Màu xanh lá cây */
+        background-color: #5cb85c; 
       }
   
       &.priority-medium {
-        background-color: #f0ad4e; /* Màu cam */
+        background-color: #f0ad4e; 
       }
   
       &.priority-high {
-        background-color: #d9534f; /* Màu đỏ */
+        background-color: #d9534f; 
       }
   
       &.priority-urgent {
-        background-color: #c9302c; /* Màu đỏ đậm hơn */
+        background-color: #c9302c; 
       }
     }
   
@@ -190,7 +193,7 @@
     }
   
     &.feedback-btn div {
-      background-color: blue; // Or your desired color
+      background-color: blue; // 
     }
   }
     }
@@ -234,7 +237,7 @@
       }
 
       &.active {
-        background-color: #5fd4bf;
+        background-color: #1effd6;
         color: #fff;
         border-color: #5fd4bf;
       }

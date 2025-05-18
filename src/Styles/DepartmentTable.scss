@@ -1,4 +1,4 @@
-    .Employee-table-wrapper{
+    .Department-table-wrapper{
     position: relative;
     display: flex;
     flex-direction: column;
@@ -67,25 +67,25 @@
        }
     }
   
-   .Employee-table-container{
+   .Department-table-container{
       overflow-x: auto;
       width: 100%;
 
-  .Employee-table {
+  .Department-table {
     border-collapse: collapse;
     background-color: #2f363e;
     color: #fff;
     font-weight: 400;
-    min-width: 1200px; 
+    min-width: 1200px; /* Table rộng hơn form */
     th{
-      width: auto;
+        width: auto;
       font-weight: 900;
       text-align: left;
     }
     td {
       padding: 12px 10px 12px 0px;
       border-bottom: 1px solid #444;
-      text-align: left;
+        text-align: left;
       font-size: 18px;
     }
   
@@ -93,71 +93,16 @@
       cursor: pointer;
       user-select: none;
     }
-    .reply-count-cell {
-      display: flex;
-      align-items: left; 
-  }
   .checkbox{
     transform: scale(1.5); 
   }
-  .action-icons {
-    display: flex;
-    gap: 8px;
-
-    .edit-btn,
-.delete-btn,
-.feedback-btn {
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-
-  div {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    span {
-      color: white;
-      font-size: 1.2em;
-    }
-  }
-
-  &.edit-btn div {
-    background-color: #00c897;
-  }
-
-  &.delete-btn div {
-    background-color: red;
-  }
-
-  &.feedback-btn div {
-    background-color: blue;
-  }
-}
-}
   .single-line-cell {
-    white-space: nowrap;     
+    white-space: nowrap;       
     overflow: hidden;        
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;    
     display: block;
-    max-width: 200px;        
+    max-width: 1000px;          
   }
-  .reply-count-cell span {
-      background-color: #b1eeb1; 
-      color: #008000; 
-      border-radius: 8px;
-      padding: 8px 14px; 
-      font-weight: bold;
-      font-size: 16px;
-    }
-    tr:hover {
-      background-color: #3a3f4b;
-      margin: 100px;
-    }
   
   }
 }

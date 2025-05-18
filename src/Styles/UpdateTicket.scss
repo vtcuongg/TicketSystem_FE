@@ -1,9 +1,9 @@
 .update-ticket-container {
     padding: 20px;
-    background-color: #2f363e; // Màu nền tối
+    background-color: #2f363e; 
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: #ecf0f1; // Màu chữ sáng
+    color: #ecf0f1; 
   
     form {
       display: flex;
@@ -97,7 +97,7 @@
                     background-color: #1abc9c !important;
                   }
                   .tox-icon svg {
-                    fill: #fff !important; // Icon màu đỏ
+                    fill: #fff !important; 
                   }
                 }
                 .tox-edit-area__iframe {
