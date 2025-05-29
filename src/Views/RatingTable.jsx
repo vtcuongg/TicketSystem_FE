@@ -111,94 +111,93 @@ const RatingTable = () => {
         }
         return pageNumbers;
     }, [currentPage, pageCount, gotoPage]);
-    if (data) {
-        return (
-            <div className="rating-table-wrapper">
-                <div className="Table-Header">
-                    <div className="show-entries">
-                        <span>Show</span>
-                        <select value={pageSize} onChange={handlePageSizeChange}>
-                            <option value={5}>5</option>
-                            <option value={8}>8</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                        </select>
-                        <span>entries</span>
-                    </div>
-                    <div className="Header-Search">
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm theo tên"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="search-input"
-                        />
-                        <FaSearch className="search-icon" />
-                    </div>
+    return (
+        <div className="rating-table-wrapper">
+            <div className="Table-Header">
+                <div className="show-entries">
+                    <span>Show</span>
+                    <select value={pageSize} onChange={handlePageSizeChange}>
+                        <option value={5}>5</option>
+                        <option value={8}>8</option>
+                        <option value={10}>10</option>
+                        <option value={15}>15</option>
+                    </select>
+                    <span>entries</span>
                 </div>
-                <table {...getTableProps()} className="Rating-table">
-                    <thead>
-                        {headerGroups.map((headerGroup) => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map((column) => (
-                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                                        style={{ width: column.width ? column.width : 'auto' }}
-                                    >
-                                        {column.render("Header")}
-                                        <span>
-                                            {column.isSorted ? (
-                                                column.isSortedDesc ? (
-                                                    <span style={{ fontWeight: 'bold' }}> ▲</span>
-                                                ) : (
-                                                    <span style={{ fontWeight: 'bold' }}> ▼</span>
-                                                )
+                <div className="Header-Search">
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm theo tên"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-input"
+                    />
+                    <FaSearch className="search-icon" />
+                </div>
+            </div>
+            <table {...getTableProps()} className="Rating-table">
+                <thead>
+                    {headerGroups.map((headerGroup) => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map((column) => (
+                                <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                                    style={{ width: column.width ? column.width : 'auto' }}
+                                >
+                                    {column.render("Header")}
+                                    <span>
+                                        {column.isSorted ? (
+                                            column.isSortedDesc ? (
+                                                <span style={{ fontWeight: 'bold' }}> ▲</span>
                                             ) : (
-                                                <>
-                                                    {" "}
-                                                    <span style={{ opacity: 0.5 }}>▼</span>
-                                                    <span style={{ opacity: 0.5 }}>▲</span>
-                                                </>
-                                            )}
-                                        </span>
-                                    </th>
+                                                <span style={{ fontWeight: 'bold' }}> ▼</span>
+                                            )
+                                        ) : (
+                                            <>
+                                                {" "}
+                                                <span style={{ opacity: 0.5 }}>▼</span>
+                                                <span style={{ opacity: 0.5 }}>▲</span>
+                                            </>
+                                        )}
+                                    </span>
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                    {rows.map((row) => {
+                        prepareRow(row);
+                        return (
+                            <tr {...row.getRowProps()}>
+                                {row.cells.map((cell) => (
+                                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                                 ))}
                             </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map((row) => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map((cell) => (
-                                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {pageCount >= 1 && (
-                    <div className="pagination">
-                        <div className="pagination-info">
-                            Showing {currentPage * pageSize + 1} to{" "}
-                            {Math.min((currentPage + 1) * pageSize, filteredData.length)} of{" "}
-                            {filteredData?.length} entries
-                        </div>
-                        <div className="pagination-buttons">
-                            <button onClick={previousPage} disabled={currentPage === 0}>
-                                Previous
-                            </button>
-                            {renderPageNumbers}
-                            <button onClick={nextPage} disabled={currentPage === pageCount - 1}>
-                                Next
-                            </button>
-                        </div>
+                        );
+                    })}
+                </tbody>
+            </table>
+            {pageCount >= 1 && (
+                <div className="pagination">
+                    <div className="pagination-info">
+                        Showing {currentPage * pageSize + 1} to{" "}
+                        {Math.min((currentPage + 1) * pageSize, filteredData.length)} of{" "}
+                        {filteredData?.length} entries
                     </div>
-                )}
-            </div>
-        );
-    }
+                    <div className="pagination-buttons">
+                        <button onClick={previousPage} disabled={currentPage === 0}>
+                            Previous
+                        </button>
+                        {renderPageNumbers}
+                        <button onClick={nextPage} disabled={currentPage === pageCount - 1}>
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
 };
 
 export default RatingTable;

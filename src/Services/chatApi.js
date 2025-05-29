@@ -26,7 +26,25 @@ export const chatApi = createApi({
                 method: 'PUT',
             }),
         }),
+        sendMessage: builder.mutation({
+            query: ({ senderId, receiverId, content, attachments }) => {
+                const formData = new FormData();
+                formData.append('SenderId', senderId);
+                formData.append('ReceiverId', receiverId);
+                formData.append('Content', content);
+
+                attachments.forEach((file, index) => {
+                    formData.append('Attachments', file);
+                });
+
+                return {
+                    url: `api/Chat`,
+                    method: 'POST',
+                    body: formData,
+                };
+            },
+        }),
     }),
 });
 
-export const { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation } = chatApi;
+export const { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation, useSendMessageMutation } = chatApi;

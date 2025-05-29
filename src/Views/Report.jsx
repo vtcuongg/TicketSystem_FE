@@ -4,7 +4,7 @@ import "../Styles/Report.scss"
 import ReactApexChart from 'react-apexcharts';
 import RatingTable from "./RatingTable";
 import { jwtDecode } from 'jwt-decode';
-import { useGetSummaryUserByDepartmentQuery, useGetSummaryTicketQuery, useLazyGetSummaryTicketQuery } from '../Services/reportApi';
+import { useGetSummaryUserByDepartmentQuery, useGetSummaryTicketQuery } from '../Services/reportApi';
 import { FaChartPie } from 'react-icons/fa';
 
 const Report = () => {
@@ -52,7 +52,7 @@ const Report = () => {
     const { data: ticketData, isLoading: isLoadingdataTicket, error: errordataTicket } = useGetSummaryTicketQuery({
         startDate: startDate,
         endDate: endDate,
-        departmentId: 4,
+        departmentId: user?.departmentID,
     });
 
     const statusColorMap = {
@@ -70,9 +70,9 @@ const Report = () => {
 
 
     const statusCounts = dataEmployee?.statusCounts ?? [];
-    const series_employee = statusCounts.map(item => item.userCount);
-    const labels_employee = statusCounts.map(item => item.status);
-    const colors_employee = statusCounts.map(item => statusEmployeeColorMap[item.status] || '#808080');
+    const series_employee = statusCounts?.map(item => item.userCount) ?? [];
+    const labels_employee = statusCounts?.map(item => item.status) ?? [];
+    const colors_employee = statusCounts?.map(item => statusEmployeeColorMap[item.status] || '#808080') ?? [];
     const chartEmployeeOptions = {
         chart: {
             type: 'donut',
@@ -99,9 +99,9 @@ const Report = () => {
     };
     const { ticketSummary } = ticketData ?? [];
 
-    const series = ticketSummary?.map(item => item.ticketCount);
-    const labels = ticketSummary?.map(item => item.status);
-    const colors = ticketSummary?.map(item => statusColorMap[item.status] || '#808080');
+    const series = ticketSummary?.map(item => item.ticketCount) ?? [];
+    const labels = ticketSummary?.map(item => item.status) ?? [];
+    const colors = ticketSummary?.map(item => statusColorMap[item.status] || '#808080') ?? [];
     const chartOptions = useMemo(() => ({
         chart: { type: 'donut' },
         labels: labels,
@@ -124,52 +124,65 @@ const Report = () => {
         return Array.isArray(series) ? [...series] : [];
     }, [series]);
 
-
-    if (dataEmployee && ticketData) {
-        return (
-            <NavBar title="Report" showHeaderLink={false} >
-                <div className="report-main-container">
-                    <div className="main-top">
-                        <div className="main-top-employee">
-                            <div className="main-top-employee-title">
-                                <p>
-                                    Employees
-                                </p>
-                            </div>
-                            <ReactApexChart className="ReactApexChart" options={chartEmployeeOptions} series={series_employee} type="donut" height={240} />
-                            <p >Tổng số Employee: {dataEmployee?.totalUsers}</p>
+    const hasEmployeeData = Array.isArray(series_employee) && series_employee.length > 0;
+    const hasTicketData = Array.isArray(chartSeries) && chartSeries.length > 0;
+    return (
+        <NavBar title="Report" showHeaderLink={false} >
+            <div className="report-main-container">
+                <div className="main-top">
+                    <div className="main-top-employee">
+                        <div className="main-top-employee-title">
+                            <p>
+                                Employees
+                            </p>
                         </div>
-                        <div className="main-top-ticket">
-                            <div className="main-top-ticket-title">
-                                <p>
-                                    Tickets
-                                </p>
-                                <input
-                                    type="date"
-                                    id="StartDate"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <span>~</span>
-                                <input
-                                    type="date"
-                                    id="EndDate"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
+                        {hasEmployeeData ? (
+                            <div>
+                                <ReactApexChart className="ReactApexChart" options={chartEmployeeOptions} series={series_employee} type="donut" height={240} />
+                                <p >Tổng số Employee: {dataEmployee?.totalUsers}</p>
                             </div>
-                            <ReactApexChart
-                                key={JSON.stringify(chartSeries)}
-                                className="ReactApexChart" options={chartOptions} series={chartSeries} type="donut" height={240} />
-                            <p >Tổng số tickets: {ticketData.totalTicket}</p>
-                        </div>
+                        ) : (
+                            <div className="no-data-message">Chưa có dữ liệu</div>
+                        )}
                     </div>
-                    <div className="main-bottom">
-                        < RatingTable />
+                    <div className="main-top-ticket">
+                        <div className="main-top-ticket-title">
+                            <p>
+                                Tickets
+                            </p>
+                            <input
+                                type="date"
+                                id="StartDate"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <span>~</span>
+                            <input
+                                type="date"
+                                id="EndDate"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                        </div>
+                        {hasTicketData ? (
+                            <div>
+                                <ReactApexChart
+                                    key={JSON.stringify(chartSeries)}
+                                    className="ReactApexChart" options={chartOptions} series={chartSeries} type="donut" height={240} />
+                                <p >Tổng số tickets: {ticketData?.totalTicket}</p>
+                            </div>
+                        ) : (
+                            <div className="no-data-message">Chưa có dữ liệu</div>
+                        )}
+
                     </div>
                 </div>
-            </NavBar>
-        )
-    }
+                <div className="main-bottom">
+                    < RatingTable />
+                </div>
+            </div>
+        </NavBar>
+    )
+    // }
 }
 export default Report;

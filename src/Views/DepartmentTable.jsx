@@ -3,8 +3,9 @@ import { useTable, useSortBy, useRowSelect } from "react-table";
 import "../Styles/DepartmentTable.scss";
 import avatar from "../assets/Images/avatar-df.png"
 import { FaSearch } from 'react-icons/fa';
-
-const DepartmentTable = ({ onRowSelect }) => {
+import { useGetDepartmentsQuery } from '../Services/departmentAPI';
+import { useLocation } from 'react-router-dom';
+const DepartmentTable = ({ onRowSelect, reloadFlag }) => {
     const IndeterminateCheckbox = React.forwardRef(
         ({ indeterminate, ...rest }, ref) => {
             const defaultRef = React.useRef()
@@ -24,108 +25,43 @@ const DepartmentTable = ({ onRowSelect }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [pageSize, setPageSize] = useState(8);
     const [currentPage, setCurrentPage] = useState(0);
+    const location = useLocation();
 
-    const data = React.useMemo(
-        () => [
-            {
-                "departmentID": 15,
-                "departmentName": "Các khoa chuyên ngành"
-            },
-            {
-                "departmentID": 12,
-                "departmentName": "Công đoàn"
-            },
-            {
-                "departmentID": 13,
-                "departmentName": "Đoàn Thanh niên, Hội SV"
-            },
-            {
-                "departmentID": 1,
-                "departmentName": "HC"
-            },
-            {
-                "departmentID": 9,
-                "departmentName": "Phòng Cơ sở Vật chất"
-            },
-            {
-                "departmentID": 2,
-                "departmentName": "Phòng Công tác Sinh viên"
-            },
-            {
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo"
-            },
-            {
-                "departmentID": 3,
-                "departmentName": "Phòng Hành chính - Tổng hợp"
-            },
-            {
-                "departmentID": 6,
-                "departmentName": "Phòng Kế hoạch - Tài chính"
-            },
-            {
-                "departmentID": 7,
-                "departmentName": "Phòng Khảo thí & Đảm bảo CLGD"
-            },
-            {
-                "departmentID": 5,
-                "departmentName": "Phòng Kỹ thuật, IT"
-            },
-            {
-                "departmentID": 8,
-                "departmentName": "Phòng Thanh tra - Pháp chế"
-            },
-            {
-                "departmentID": 14,
-                "departmentName": "Tổ Công nghệ Thông tin"
-            },
-            {
-                "departmentID": 10,
-                "departmentName": "Trung tâm Hỗ trợ SV & Quan hệ DN"
-            },
-            {
-                "departmentID": 11,
-                "departmentName": "Trung tâm Tin học Bách khoa"
-            }
-        ]
-        , []
-    );
-    // Xử lý filter dữ liệu
+    const { data: data, isLoading, error, refetch } = useGetDepartmentsQuery()
+    useEffect(() => {
+        refetch()
+    }, [location.pathname]);
     const filteredData = React.useMemo(() => {
-        if (!searchTerm) return data;
+        if (!data?.data) return [];
 
-        return data.filter((department) => {
+        return data?.data.filter((department) => {
             const departmentName = department.departmentName?.toLowerCase().includes(searchTerm.toLowerCase());
             return departmentName;
         });
-    }, [searchTerm, data]);
-    // Tính toán số lượng trang
-    const pageCount = Math.ceil(filteredData.length / pageSize);
-
-    // Lấy dữ liệu cho trang hiện tại
+    }, [searchTerm, data?.data]);
+    useEffect(() => {
+        refetch();
+    }, [reloadFlag]);
+    const pageCount = Math.ceil(filteredData?.length / pageSize);
     const currentPageData = React.useMemo(() => {
         const startIndex = currentPage * pageSize;
-        return filteredData.slice(startIndex, startIndex + pageSize);
+        return filteredData?.slice(startIndex, startIndex + pageSize);
     }, [currentPage, pageSize, filteredData]);
-    // Hàm xử lý thay đổi số lượng item trên trang
     const handlePageSizeChange = (event) => {
         setPageSize(Number(event.target.value));
-        setCurrentPage(0); // Reset về trang đầu tiên khi thay đổi pageSize
+        setCurrentPage(0);
     };
 
-    // Hàm xử lý chuyển trang
     const gotoPage = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
 
-    // Hàm xử lý chuyển đến trang trước
     const previousPage = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1);
         }
     };
 
-    // Hàm xử lý chuyển đến trang sau
     const nextPage = () => {
         if (currentPage < pageCount - 1) {
             setCurrentPage(currentPage + 1);
@@ -168,7 +104,7 @@ const DepartmentTable = ({ onRowSelect }) => {
     );
 
     const tableInstance = useTable({
-        columns, data: currentPageData,
+        columns, data: currentPageData ?? [],
         getRowId: (row) => row.departmentID,
     }, useSortBy, useRowSelect);
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state: { selectedRowIds }, toggleAllRowsSelected } =

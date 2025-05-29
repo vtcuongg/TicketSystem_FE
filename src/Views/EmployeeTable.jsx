@@ -6,7 +6,9 @@ import { FaSearch } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
 import { useGetUsersByDepartmentQuery } from "../Services/userApi";
 import { useGetTicketsQuery } from '../Services/ticketApi';
-const EmployeeTable = ({ onRowSelect }) => {
+import { useGetAllUsersQuery } from "../Services/userApi";
+import { useLocation } from 'react-router-dom';
+const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
 
     const IndeterminateCheckbox = React.forwardRef(
         ({ indeterminate, ...rest }, ref) => {
@@ -29,6 +31,10 @@ const EmployeeTable = ({ onRowSelect }) => {
     const [pageSize, setPageSize] = useState(5);
     const [currentPage, setCurrentPage] = useState(0);
     const [user, setUser] = useState(null);
+    const location = useLocation();
+    const getAllUsersQuery = useGetAllUsersQuery();
+
+    const getUsersByDepartmentQuery = useGetUsersByDepartmentQuery(user?.departmentID);
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
@@ -50,20 +56,36 @@ const EmployeeTable = ({ onRowSelect }) => {
             }
         }
     }, []);
-    const { data, isLoading, error } = useGetUsersByDepartmentQuery(user?.departmentID);
+    const {
+        data: data,
+        isLoading: isLoading,
+        error: error,
+        refetch
+    } = user?.roleName === "Admin" ? getAllUsersQuery : getUsersByDepartmentQuery;
+    useEffect(() => {
+        if (refetch && typeof refetch === "function") {
+            refetch().then(res => console.log("Refetch result:", res));
+        }
+    }, [location.pathname, refetch]);
+
+    useEffect(() => {
+        if (refetch && typeof refetch === "function") {
+            refetch().then(res => console.log("Refetch result:", res));
+        }
+    }, [reloadFlag, refetch]);
     const filteredData = React.useMemo(() => {
-        if (!data?.data) return [];
-        if (!searchTerm) return data?.data;
-        return data?.data.filter((user) => {
+        if (!data?.data.users) return [];
+        if (!searchTerm) return data?.data.users;
+        return data?.data.users.filter((user) => {
             const userName = user.userName?.toLowerCase().includes(searchTerm.toLowerCase());
             const Email = user.email?.toLowerCase().includes(searchTerm.toLowerCase());
             return userName || Email;
         });
-    }, [searchTerm, data?.data]);
+    }, [searchTerm, data?.data.users]);
     const pageCount = Math.ceil(filteredData?.length / pageSize);
     const currentPageData = React.useMemo(() => {
         const startIndex = currentPage * pageSize;
-        return filteredData.slice(startIndex, startIndex + pageSize);
+        return filteredData?.slice(startIndex, startIndex + pageSize);
     }, [currentPage, pageSize, filteredData]);
     const handlePageSizeChange = (event) => {
         setPageSize(Number(event.target.value));
@@ -199,7 +221,7 @@ const EmployeeTable = ({ onRowSelect }) => {
         return pageNumbers;
     }, [currentPage, pageCount, gotoPage]);
 
-    if (data?.data) {
+    if (data?.data.users) {
         return (
             <div className="Employee-table-wrapper">
                 <div className="Table-Header">

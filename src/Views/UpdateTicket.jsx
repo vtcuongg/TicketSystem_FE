@@ -187,7 +187,7 @@ const UpdateTicket = () => {
     const OptionComponent = (props) => {
         return (
             <div
-                className={`${props.className} select__option`} // Đảm bảo className được áp dụng
+                className={`${props.className} select__option`}
                 onClick={() => {
                     if (props.selectOption) {
                         props.selectOption(props.data);
@@ -373,7 +373,7 @@ const UpdateTicket = () => {
                         <div className="form-group">
                             <label htmlFor="description">Ticket Description</label>
                             <Editor
-                                apiKey="bn972j3oqquoc6n2870a4qxvsrmz16es2n5pgp2ny2lbsluk" // Replace with your TinyMCE API key
+                                apiKey="bn972j3oqquoc6n2870a4qxvsrmz16es2n5pgp2ny2lbsluk"
                                 value={formData?.Description}
                                 onEditorChange={handleEditorChange}
                                 init={{

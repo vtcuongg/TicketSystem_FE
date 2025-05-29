@@ -4,9 +4,14 @@ import "../Styles/Employee.scss"
 import CategoryTable from "./CategoryTable";
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useDeleteCategoryMutation } from '../Services/categoryApi';
+
 const Categories = () => {
     const navigate = useNavigate();
+    const [deleteCategory, { isLoading: isDeleting, isSuccess: isDeleteSuccess, isError: isDeleteError, error: deleteError }] = useDeleteCategoryMutation();
+
     const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+    const [reloadFlag, setReloadFlag] = useState(false);
     const handleRowSelect = (ids) => {
         setSelectedCategoryIds(ids);
     };
@@ -37,11 +42,26 @@ const Categories = () => {
             });
 
             if (result.isConfirmed) {
-                Swal.fire(
-                    'Đã xoá!',
-                    'Các Category đã được xoá thành công.',
-                    'success'
-                );
+                try {
+                    await Promise.all(
+                        selectedCategoryIds.map(async (id) => {
+                            await deleteCategory(id);
+                        })
+                    );
+                    setReloadFlag(prev => !prev);
+                    Swal.fire(
+                        'Đã xoá!',
+                        'Các Categories đã được xoá thành công.',
+                        'success'
+                    );
+                } catch (err) {
+                    console.error('Lỗi khi xoá Categories:', deleteError || err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi xoá các Categories.',
+                    });
+                }
             }
         } else {
             Swal.fire({
@@ -66,7 +86,7 @@ const Categories = () => {
 
                 </div>
                 <div className="Main-Employee">
-                    <CategoryTable onRowSelect={handleRowSelect} />
+                    <CategoryTable onRowSelect={handleRowSelect} reloadFlag={reloadFlag} />
                 </div>
             </div>
         </NavBar>

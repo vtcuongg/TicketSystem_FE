@@ -59,7 +59,7 @@ const CreateTicket = ({ onLogout }) => {
     });
     const PriorityOptions = useMemo(() => [
         { value: '1', label: 'Thấp' },
-        { value: '2', label: 'Trung Bình' },
+        { value: '2', label: 'Trung bình' },
         { value: '3', label: 'Cao' },
         { value: '4', label: 'Khẩn cấp' },
     ], []);

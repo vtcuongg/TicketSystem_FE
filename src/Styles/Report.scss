@@ -16,6 +16,7 @@
     .main-top-employee{
       height: 380px;
       flex-grow: 1;
+      width: 500px;
       border-radius: 20px;
       background-color: #2f363e;
       margin-right: 30px;
@@ -66,6 +67,10 @@
       }
     }
     }
+     .no-data-message{
+            color: #fff;
+            margin-left: 20px;
+          }
     .main-top-ticket{
           display: flex;
           height: 380px;
@@ -124,11 +129,12 @@
             color: #fff;
             margin-left: 20px;
           }
+          
           .ReactApexChart{
             margin-left: -50px;
             margin-bottom: -15px;
             margin-top: -5px;
-          
+         
           .apexcharts-legend {
             position: absolute !important;
             display: flex !important;

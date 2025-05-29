@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useTable, useSortBy, useRowSelect } from "react-table";
 import "../Styles/TicketTable.scss";
 import avatar from "../assets/Images/avatar-df.png"
@@ -7,6 +7,9 @@ import { useGetTicketsQuery } from '../Services/ticketApi';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import RatingModal from "./RatingModal";
+import { usePostFeedbackMutation, usePostFeedbackAssigneeMutation } from '../Services/feedBackApi';
+import Swal from 'sweetalert2';
 const TicketTable = ({ onRowSelect, reloadFlag }) => {
     const IndeterminateCheckbox = React.forwardRef(
         ({ indeterminate, ...rest }, ref) => {
@@ -26,7 +29,22 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [pageSize, setPageSize] = useState(8);
     const [currentPage, setCurrentPage] = useState(0);
+    const [assignFeedBack, setAssignFeedBack] = useState([])
     const [user, setUser] = useState(null);
+    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false); // State để điều khiển modal
+    const [selectedTicketIdForRating, setSelectedTicketIdForRating] = useState(null); // State để lưu ID của ticket đang được đánh giá
+    const [postFeedback] = usePostFeedbackMutation();
+    const [postFeedbackAssignee] = usePostFeedbackAssigneeMutation();
+    const handleOpenRatingModal = useCallback((ticketId, assignedUsers) => {
+        setSelectedTicketIdForRating(ticketId);
+        setIsRatingModalOpen(true);
+        setAssignFeedBack(assignedUsers)
+    }, []);
+    console.log(assignFeedBack)
+    const handleCloseRatingModal = useCallback(() => {
+        setIsRatingModalOpen(false);
+        setSelectedTicketIdForRating(null);
+    }, []);
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
@@ -48,6 +66,37 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
             }
         }
     }, []);
+    const handleSubmitRating = useCallback(({ rating, comment }) => {
+        try {
+            postFeedback({
+                ticketID: selectedTicketIdForRating,
+                createdBy: user?.id,
+                comment: comment,
+                rating: rating
+            }).unwrap();
+            if (Array.isArray(assignFeedBack) && assignFeedBack.length > 0) {
+                for (const assignee of assignFeedBack) {
+                    try {
+                        const assigneeFeedbackData = {
+                            ticketID: selectedTicketIdForRating,
+                            assignedTo: assignee.assignedTo
+                        };
+                        postFeedbackAssignee(assigneeFeedbackData).unwrap();
+                    } catch (err) {
+                        console.error(`Failed to post feedback for assignee ${assignee.userName || assignee.id}:`, err);
+                    }
+                }
+            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công !',
+                text: 'Cảm ơn bạn đã dành thời gian để đánh giá',
+            });
+        } catch (err) {
+            console.log(err)
+        }
+
+    }, [selectedTicketIdForRating]);
     const location = useLocation();
     const { data, isLoading, error, refetch } = useGetTicketsQuery({
         ...(location.pathname === "/my-ticket" && { createdBy: user?.id }),
@@ -103,184 +152,197 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
         }
     };
     const columns = React.useMemo(
-        () => [
-            {
-                id: 'selection',
-                Header: ({ getToggleAllRowsSelectedProps }) => (
-                    <div>
-                        <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                    </div>
-                ),
-                Cell: ({ row }) => {
-                    return (
-                        <div>
-                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                        </div>
-                    );
-                },
-            },
-            { Header: "TicketID", accessor: "ticketID" },
-            {
-                Header: "Title", accessor: "title",
-                Cell: ({ value }) => (
-                    <span className="title-line-cell">{value}</span>
-                )
-            },
-            {
-                Header: "Description",
-                accessor: "description",
-                Cell: ({ value }) => (
-                    <span
-                        className="description-line-cell"
-                        dangerouslySetInnerHTML={{ __html: value }}
-                    />
-                )
-            },
-            {
-                Header: "Priority",
-                accessor: "priority",
-                Cell: ({ value }) => {
-                    let priorityClass = "";
-                    switch (value) {
-                        case "Thấp":
-                            priorityClass = "priority-low";
-                            break;
-                        case "Trung bình":
-                            priorityClass = "priority-medium";
-                            break;
-                        case "Cao":
-                            priorityClass = "priority-high";
-                            break;
-                        case "Khẩn cấp":
-                            priorityClass = "priority-urgent";
-                            break;
-                        default:
-                            priorityClass = "";
-                            break;
-                    }
-                    return <span className={`priority ${priorityClass}`}>{value}</span>;
-                },
-            },
-            {
-                Header: "Status",
-                accessor: "status",
-                Cell: ({ value }) => {
-                    return <span className="status">{value}</span>;
-                },
-            },
-            {
-                Header: "Assign To",
-                accessor: "assignedUsers",
-                Cell: ({ value }) => {
-                    if (!Array.isArray(value) || value.length === 0) {
-                        return <span style={{
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            flex: 1,
-                        }}>
-                            Chưa được phân công</span>;
-                    }
-                    return (
-                        <div>
-                            {value.map((user) => (
-                                <div key={user?.assignmentID} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', width: '100px' }}>
-                                    {user?.avatar && (
-                                        <img
-                                            src={user?.avatar}
-                                            alt={user?.userName}
-                                            style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px', objectFit: 'cover' }}
-                                        />
-                                    )}
-                                    <span
-                                        style={{
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap',
-                                            flex: 1,
-                                        }}
-                                    >
-                                        {user.userName}
-                                    </span>
-                                </div>
 
-                            ))}
+        () => {
+            const baseColumns = [
+                {
+                    id: 'selection',
+                    Header: ({ getToggleAllRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
                         </div>
-                    );
-                },
-            },
-            {
-                Header: "CreatedBy",
-                accessor: "createdByName",
-                Cell: ({ row }) => {
-                    const createdByAvatar = row.original.createdByAvatar;
-                    const createdByName = row.original.createdByName;
-
-                    return (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            {createdByAvatar && (
-                                <img
-                                    src={createdByAvatar}
-                                    alt={createdByName}
-                                    style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px', objectFit: 'cover' }}
-                                />
-                            )}
-                            <span
-                                style={{
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
-                                    flex: 1,
-                                }}
-                            >
-                                {createdByName}
-                            </span>
-                        </div>
-                    );
-                },
-            },
-            {
-                Header: "CreatedAt",
-                accessor: "createdAt",
-                Cell: ({ value }) => {
-                    if (value) {
-                        const date = new Date(value);
-                        const day = String(date.getDate()).padStart(2, '0');
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const year = String(date.getFullYear()).slice(-2);
-                        return <span className="date-cell">{`${day}/${month}/${year}`}</span>;
-                    }
-                    return '';
-                },
-            },
-            {
-                Header: "DueDate",
-                accessor: "dueDate",
-                Cell: ({ value }) => {
-                    if (value) {
-                        const date = new Date(value);
-                        const day = String(date.getDate()).padStart(2, '0');
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const year = String(date.getFullYear()).slice(-2);
-                        return <span className="date-cell">{`${day}/${month}/${year}`}</span>;
-                    }
-                    return '';
-                },
-            },
-            {
-                Header: "Actions",
-                Cell: () => (
-                    <div className='action-icons'>
-                        <button className='feedback-btn'>
+                    ),
+                    Cell: ({ row }) => {
+                        return (
                             <div>
-                                <span><FaComments /></span>
+                                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
                             </div>
-                        </button>
-                    </div>
-                ),
-            },
-        ],
-        []
+                        );
+                    },
+                },
+                { Header: "TicketID", accessor: "ticketID" },
+                {
+                    Header: "Title", accessor: "title",
+                    Cell: ({ value }) => (
+                        <span className="title-line-cell">{value}</span>
+                    )
+                },
+                {
+                    Header: "Description",
+                    accessor: "description",
+                    Cell: ({ value }) => (
+                        <span
+                            className="description-line-cell"
+                            dangerouslySetInnerHTML={{ __html: value }}
+                        />
+                    )
+                },
+                {
+                    Header: "Priority",
+                    accessor: "priority",
+                    Cell: ({ value }) => {
+                        let priorityClass = "";
+                        switch (value) {
+                            case "Thấp":
+                                priorityClass = "priority-low";
+                                break;
+                            case "Trung bình":
+                                priorityClass = "priority-medium";
+                                break;
+                            case "Cao":
+                                priorityClass = "priority-high";
+                                break;
+                            case "Khẩn cấp":
+                                priorityClass = "priority-urgent";
+                                break;
+                            default:
+                                priorityClass = "";
+                                break;
+                        }
+                        return <span className={`priority ${priorityClass}`}>{value}</span>;
+                    },
+                },
+                {
+                    Header: "Status",
+                    accessor: "status",
+                    Cell: ({ value }) => {
+                        return <span className="status">{value}</span>;
+                    },
+                },
+                {
+                    Header: "Assign To",
+                    accessor: "assignedUsers",
+                    Cell: ({ value }) => {
+                        if (!Array.isArray(value) || value.length === 0) {
+                            return <span style={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                flex: 1,
+                            }}>
+                                Chưa được phân công</span>;
+                        }
+                        // setAssignFeedBack(value.map(user => user?.id))
+                        return (
+                            <div>
+                                {value.map((user) => (
+                                    <div key={user?.assignmentID} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', width: '100px' }}>
+                                        {user?.avatar && (
+                                            <img
+                                                src={user?.avatar}
+                                                alt={user?.userName}
+                                                style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px', objectFit: 'cover' }}
+                                            />
+                                        )}
+                                        <span
+                                            style={{
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap',
+                                                flex: 1,
+                                            }}
+                                        >
+                                            {user.userName}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    },
+                },
+                {
+                    Header: "CreatedBy",
+                    accessor: "createdByName",
+                    Cell: ({ row }) => {
+                        const createdByAvatar = row.original.createdByAvatar;
+                        const createdByName = row.original.createdByName;
+
+                        return (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                {createdByAvatar && (
+                                    <img
+                                        src={createdByAvatar}
+                                        alt={createdByName}
+                                        style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px', objectFit: 'cover' }}
+                                    />
+                                )}
+                                <span
+                                    style={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        flex: 1,
+                                    }}
+                                >
+                                    {createdByName}
+                                </span>
+                            </div>
+                        );
+                    },
+                },
+                {
+                    Header: "CreatedAt",
+                    accessor: "createdAt",
+                    Cell: ({ value }) => {
+                        if (value) {
+                            const date = new Date(value);
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const year = String(date.getFullYear()).slice(-2);
+                            return <span className="date-cell">{`${day}/${month}/${year}`}</span>;
+                        }
+                        return '';
+                    },
+                },
+                {
+                    Header: "DueDate",
+                    accessor: "dueDate",
+                    Cell: ({ value }) => {
+                        if (value) {
+                            const date = new Date(value);
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const year = String(date.getFullYear()).slice(-2);
+                            return <span className="date-cell">{`${day}/${month}/${year}`}</span>;
+                        }
+                        return '';
+                    },
+                },
+            ];
+            if (location.pathname === "/my-ticket") {
+                return [
+                    ...baseColumns,
+                    {
+                        Header: "Actions",
+                        Cell: ({ row }) => (
+                            <div className='action-icons'>
+                                <button className='feedback-btn'>
+                                    <div>
+                                        <span><FaComments onClick={() => {
+                                            handleOpenRatingModal(row.original.ticketID, row.original.assignedUsers)
+                                        }
+                                        }
+                                        /></span>
+                                    </div>
+                                </button>
+                            </div>
+                        ),
+                    },
+                ];
+            }
+            return baseColumns;
+        },
+        [location.pathname, handleOpenRatingModal]
     );
 
 
@@ -404,6 +466,13 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     </div>
                 </div>
             )}
+            {/* Thêm RatingModal ở đây */}
+            <RatingModal
+                isOpen={isRatingModalOpen}
+                onClose={handleCloseRatingModal}
+                onSubmit={handleSubmitRating}
+                ticketId={selectedTicketIdForRating}
+            />
         </div>
     );
 };

@@ -4,9 +4,13 @@ import "../Styles/Employee.scss"
 import DepartmentTable from "./DepartmentTable";
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useDeleteDepartmentMutation } from '../Services/departmentAPI';
+
 const Department = () => {
+    const [deleteDepartment, { isLoading: isDeleting, isSuccess: isDeleteSuccess, isError: isDeleteError, error: deleteError }] = useDeleteDepartmentMutation();
     const navigate = useNavigate();
     const [selectedDepartmentIds, setSelectedDepartmentIds] = useState([]);
+    const [reloadFlag, setReloadFlag] = useState(false);
     const handleRowSelect = (ids) => {
         setSelectedDepartmentIds(ids);
     };
@@ -37,11 +41,26 @@ const Department = () => {
             });
 
             if (result.isConfirmed) {
-                Swal.fire(
-                    'Đã xoá!',
-                    'Các department đã được xoá thành công.',
-                    'success'
-                );
+                try {
+                    await Promise.all(
+                        selectedDepartmentIds.map(async (id) => {
+                            await deleteDepartment(id);
+                        })
+                    );
+                    setReloadFlag(prev => !prev);
+                    Swal.fire(
+                        'Đã xoá!',
+                        'Các department đã được xoá thành công.',
+                        'success'
+                    );
+                } catch (err) {
+                    console.error('Lỗi khi xoá department:', deleteError || err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi xoá các department.',
+                    });
+                }
             }
         } else {
             Swal.fire({
@@ -66,7 +85,7 @@ const Department = () => {
 
                 </div>
                 <div className="Main-Employee">
-                    <DepartmentTable onRowSelect={handleRowSelect} />
+                    <DepartmentTable onRowSelect={handleRowSelect} reloadFlag={reloadFlag} />
                 </div>
             </div>
         </NavBar>

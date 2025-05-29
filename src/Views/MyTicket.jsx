@@ -51,7 +51,7 @@ const MyTicket = () => {
                 setSelectedTicketIds([]);
                 Swal.fire(
                     'Đã xoá!',
-                    'Các department đã được xoá thành công.',
+                    'Các Ticket đã được xoá thành công.',
                     'success'
                 );
             }
@@ -59,7 +59,7 @@ const MyTicket = () => {
             Swal.fire({
                 icon: 'warning',
                 title: 'Chú ý!',
-                text: 'Vui lòng chọn ít nhất một Department để xoá.',
+                text: 'Vui lòng chọn ít nhất một Ticket để xoá.',
             });
         }
     };

@@ -12,6 +12,8 @@ import Department from './Views/Department';
 import CreateDepartment from './Views/CreateDepartment';
 import Categories from './Views/Categories';
 import CreateCategory from './Views/CreateCategory';
+import Profile from './Views/Profile';
+import ChangePass from './Views/ChangePass';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
@@ -22,7 +24,7 @@ import { MdWysiwyg } from 'react-icons/md';
 import { useRef } from 'react';
 function App() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null); // Lưu user trong state của component
+  const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const connection = useRef(null);
   useEffect(() => {
@@ -35,7 +37,7 @@ function App() {
         const currentTime = Date.now() / 1000;
 
         if (decodedToken.exp > currentTime) {
-          setUser(JSON.parse(storedUser)); // Lưu user vào state từ localStorage
+          setUser(JSON.parse(storedUser));
           setIsAdmin(JSON.parse(storedUser).roleName === 'Admin');
         } else {
           localStorage.removeItem('authToken');
@@ -88,6 +90,8 @@ function App() {
         <Route path="/Categories" element={<Categories />} />
         <Route path="/create-category" element={<CreateCategory />} />
         <Route path="/update-category/:id" element={<CreateCategory />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/change-pass/:id" element={<ChangePass />} />
       </Routes>
 
     </Router>

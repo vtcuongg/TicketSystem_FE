@@ -35,7 +35,7 @@ export const ticketApi = createApi({
         updateTicket: builder.mutation({
             query: (ticket) => ({
                 url: `api/Ticket`,
-                method: 'PUT', // hoặc PATCH nếu backend dùng PATCH
+                method: 'PUT',
                 body: ticket,
             }),
         }),

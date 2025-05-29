@@ -355,7 +355,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                 <FaChevronDown />
                                 {isDropdownAvatarOpen && (
                                     <div className="dropdown">
-                                        <div className="dropdown-item">
+                                        <div className="dropdown-item" onClick={() => navigate(`/profile/${user?.id}`)}>
                                             <span className="dropdown-icon">👤</span> Profile
                                         </div>
                                         <div className="dropdown-item" onClick={HandleLogout}>

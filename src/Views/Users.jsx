@@ -3,9 +3,12 @@ import React, { useMemo, useState } from 'react';
 import "../Styles/Employee.scss"
 import EmployeeTable from "./EmployeeTable";
 import { useNavigate } from 'react-router-dom';
+import { useDeleteUserByIdMutation } from '../Services/userApi';
 import Swal from 'sweetalert2';
 const Users = () => {
     const navigate = useNavigate();
+    const [deleteUser, { isLoading: isDeleting, isSuccess: isDeleteSuccess, isError: isDeleteError, error: deleteError }] = useDeleteUserByIdMutation();
+    const [reloadFlag, setReloadFlag] = useState(false);
     const [selectedUserIds, setSelectedUserIds] = useState([]);
     const handleRowSelect = (ids) => {
         setSelectedUserIds(ids);
@@ -26,7 +29,7 @@ const Users = () => {
         if (selectedUserIds.length > 0) {
             const result = await Swal.fire({
                 title: 'Xác nhận xoá',
-                text: `Bạn có chắc chắn muốn xoá ${selectedUserIds.length} Users?`,
+                text: `Bạn có chắc chắn muốn xoá ${selectedUserIds.length} User ?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -36,11 +39,26 @@ const Users = () => {
             });
 
             if (result.isConfirmed) {
-                Swal.fire(
-                    'Đã xoá!',
-                    'Các Users đã được xoá thành công.',
-                    'success'
-                );
+                try {
+                    await Promise.all(
+                        selectedUserIds.map(async (id) => {
+                            await deleteUser(id);
+                        })
+                    );
+                    setReloadFlag(prev => !prev);
+                    Swal.fire(
+                        'Đã xoá!',
+                        'Các Users đã được xoá thành công.',
+                        'success'
+                    );
+                } catch (err) {
+                    console.error('Lỗi khi xoá Users:', deleteError || err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi xoá các Users.',
+                    });
+                }
             }
         } else {
             Swal.fire({
@@ -65,7 +83,7 @@ const Users = () => {
 
                 </div>
                 <div className="Main-Employee">
-                    <EmployeeTable onRowSelect={handleRowSelect} />
+                    <EmployeeTable onRowSelect={handleRowSelect} reloadFlag={reloadFlag} />
                 </div>
             </div>
         </NavBar>

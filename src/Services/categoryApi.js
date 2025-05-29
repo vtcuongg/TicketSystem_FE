@@ -16,9 +16,36 @@ export const categoryApi = createApi({
         getCategoriesByDepartment: builder.query({
             query: (departmentId) => `api/Category/by-department/${departmentId}`,
         }),
+        getAllCategories: builder.query({
+            query: () => 'api/Category',
+        }),
+        addCategory: builder.mutation({
+            query: (body) => ({
+                url: 'api/Category',
+                method: 'POST',
+                body,
+            }),
+        }),
+        updateCategory: builder.mutation({
+            query: (body) => ({
+                url: `api/Category`,
+                method: 'PUT',
+                body,
+            }),
+        }),
+        getCategoryById: builder.query({
+            query: (id) => `/api/Category/${id}`,
+        }),
+        deleteCategory: builder.mutation({
+            query: (id) => ({
+                url: `api/Category/${id}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
 export const {
-    useGetCategoriesByDepartmentQuery,
+    useGetCategoriesByDepartmentQuery, useGetAllCategoriesQuery, useAddCategoryMutation,
+    useDeleteCategoryMutation, useUpdateCategoryMutation, useGetCategoryByIdQuery
 } = categoryApi;

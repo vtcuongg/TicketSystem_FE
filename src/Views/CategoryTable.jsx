@@ -3,8 +3,11 @@ import { useTable, useSortBy, useRowSelect } from "react-table";
 import "../Styles/CategoryTable.scss";
 import avatar from "../assets/Images/avatar-df.png"
 import { FaSearch } from 'react-icons/fa';
+import { useGetCategoriesByDepartmentQuery, useGetAllCategoriesQuery } from '../Services/categoryApi';
+import { useGetDepartmentsQuery } from '../Services/departmentAPI';
+import { useLocation } from 'react-router-dom';
 
-const CategoryTable = ({ onRowSelect }) => {
+const CategoryTable = ({ onRowSelect, reloadFlag }) => {
     const IndeterminateCheckbox = React.forwardRef(
         ({ indeterminate, ...rest }, ref) => {
             const defaultRef = React.useRef()
@@ -25,262 +28,18 @@ const CategoryTable = ({ onRowSelect }) => {
     const [pageSize, setPageSize] = useState(8);
     const [currentPage, setCurrentPage] = useState(0);
     const [department, setDepartment] = useState('');
-
-    const dataDepartment = React.useMemo(
-        () => [
-            {
-                "departmentID": 15,
-                "departmentName": "Các khoa chuyên ngành"
-            },
-            {
-                "departmentID": 12,
-                "departmentName": "Công đoàn"
-            },
-            {
-                "departmentID": 13,
-                "departmentName": "Đoàn Thanh niên, Hội SV"
-            },
-            {
-                "departmentID": 1,
-                "departmentName": "HC"
-            },
-            {
-                "departmentID": 9,
-                "departmentName": "Phòng Cơ sở Vật chất"
-            },
-            {
-                "departmentID": 2,
-                "departmentName": "Phòng Công tác Sinh viên"
-            },
-            {
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo"
-            },
-            {
-                "departmentID": 3,
-                "departmentName": "Phòng Hành chính - Tổng hợp"
-            },
-            {
-                "departmentID": 6,
-                "departmentName": "Phòng Kế hoạch - Tài chính"
-            },
-            {
-                "departmentID": 7,
-                "departmentName": "Phòng Khảo thí & Đảm bảo CLGD"
-            },
-            {
-                "departmentID": 5,
-                "departmentName": "Phòng Kỹ thuật, IT"
-            },
-            {
-                "departmentID": 8,
-                "departmentName": "Phòng Thanh tra - Pháp chế"
-            },
-            {
-                "departmentID": 14,
-                "departmentName": "Tổ Công nghệ Thông tin"
-            },
-            {
-                "departmentID": 10,
-                "departmentName": "Trung tâm Hỗ trợ SV & Quan hệ DN"
-            },
-            {
-                "departmentID": 11,
-                "departmentName": "Trung tâm Tin học Bách khoa"
-            }
-        ]
-        , []
-    );
-    const data = React.useMemo(
-        () => [
-            {
-                "categoryID": 1,
-                "categoryName": "Miễn giảm học phí",
-                "departmentID": 1,
-                "departmentName": "HC"
-            },
-            {
-                "categoryID": 2,
-                "categoryName": "Chính sách đãi ngộ",
-                "departmentID": 1,
-                "departmentName": "HC"
-            },
-            {
-                "categoryID": 3,
-                "categoryName": "Ký túc xá",
-                "departmentID": 1,
-                "departmentName": "HC"
-            },
-            {
-                "categoryID": 4,
-                "categoryName": "Bảo hiểm",
-                "departmentID": 1,
-                "departmentName": "HC"
-            },
-            {
-                "categoryID": 5,
-                "categoryName": "Cấp giấy tờ",
-                "departmentID": 2,
-                "departmentName": "Phòng Công tác Sinh viên"
-            },
-            {
-                "categoryID": 6,
-                "categoryName": "Nhân sự",
-                "departmentID": 2,
-                "departmentName": "Phòng Công tác Sinh viên"
-            },
-            {
-                "categoryID": 7,
-                "categoryName": "Học vụ",
-                "departmentID": 3,
-                "departmentName": "Phòng Hành chính - Tổng hợp"
-            },
-            {
-                "categoryID": 8,
-                "categoryName": "Xử lý lỗi hệ thống",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo"
-            },
-            {
-                "categoryID": 9,
-                "categoryName": "Hỗ trợ CNTT",
-                "departmentID": 4,
-                "departmentName": "Phòng Đào tạo"
-            },
-            {
-                "categoryID": 10,
-                "categoryName": "Học phí",
-                "departmentID": 5,
-                "departmentName": "Phòng Kỹ thuật, IT"
-            },
-            {
-                "categoryID": 11,
-                "categoryName": "Học bổng",
-                "departmentID": 5,
-                "departmentName": "Phòng Kỹ thuật, IT"
-            },
-            {
-                "categoryID": 12,
-                "categoryName": "Thu chi",
-                "departmentID": 5,
-                "departmentName": "Phòng Kỹ thuật, IT"
-            },
-            {
-                "categoryID": 13,
-                "categoryName": "Giám sát thi cử",
-                "departmentID": 6,
-                "departmentName": "Phòng Kế hoạch - Tài chính"
-            },
-            {
-                "categoryID": 14,
-                "categoryName": "Đánh giá chất lượng",
-                "departmentID": 6,
-                "departmentName": "Phòng Kế hoạch - Tài chính"
-            },
-            {
-                "categoryID": 15,
-                "categoryName": "Khiếu nại",
-                "departmentID": 7,
-                "departmentName": "Phòng Khảo thí & Đảm bảo CLGD"
-            },
-            {
-                "categoryID": 16,
-                "categoryName": "Tố cáo",
-                "departmentID": 7,
-                "departmentName": "Phòng Khảo thí & Đảm bảo CLGD"
-            },
-            {
-                "categoryID": 17,
-                "categoryName": "Giám sát nội quy",
-                "departmentID": 7,
-                "departmentName": "Phòng Khảo thí & Đảm bảo CLGD"
-            },
-            {
-                "categoryID": 18,
-                "categoryName": "Sửa chữa phòng học,Thiết bị giảng dạy",
-                "departmentID": 8,
-                "departmentName": "Phòng Thanh tra - Pháp chế"
-            },
-            {
-                "categoryID": 19,
-                "categoryName": "Việc làm",
-                "departmentID": 9,
-                "departmentName": "Phòng Cơ sở Vật chất"
-            },
-            {
-                "categoryID": 20,
-                "categoryName": "Kỹ năng mềm",
-                "departmentID": 9,
-                "departmentName": "Phòng Cơ sở Vật chất"
-            },
-            {
-                "categoryID": 21,
-                "categoryName": "Hỗ trợ phần mềm",
-                "departmentID": 10,
-                "departmentName": "Trung tâm Hỗ trợ SV & Quan hệ DN"
-            },
-            {
-                "categoryID": 22,
-                "categoryName": "Mạng nội bộ",
-                "departmentID": 10,
-                "departmentName": "Trung tâm Hỗ trợ SV & Quan hệ DN"
-            },
-            {
-                "categoryID": 23,
-                "categoryName": "Hỗ trợ đời sống cán bộ",
-                "departmentID": 11,
-                "departmentName": "Trung tâm Tin học Bách khoa"
-            },
-            {
-                "categoryID": 24,
-                "categoryName": "Hoạt động ngoại khóa",
-                "departmentID": 12,
-                "departmentName": "Công đoàn"
-            },
-            {
-                "categoryID": 25,
-                "categoryName": "Tình nguyện",
-                "departmentID": 12,
-                "departmentName": "Công đoàn"
-            },
-            {
-                "categoryID": 26,
-                "categoryName": "Câu lạc bộ",
-                "departmentID": 12,
-                "departmentName": "Công đoàn"
-            },
-            {
-                "categoryID": 27,
-                "categoryName": "Quản lý máy chủ",
-                "departmentID": 13,
-                "departmentName": "Đoàn Thanh niên, Hội SV"
-            },
-            {
-                "categoryID": 28,
-                "categoryName": "An toàn dữ liệu",
-                "departmentID": 13,
-                "departmentName": "Đoàn Thanh niên, Hội SV"
-            },
-            {
-                "categoryID": 29,
-                "categoryName": "Xác nhận học phần",
-                "departmentID": 14,
-                "departmentName": "Tổ Công nghệ Thông tin"
-            },
-            {
-                "categoryID": 30,
-                "categoryName": "Xét duyệt đề tài nghiên cứu",
-                "departmentID": 14,
-                "departmentName": "Tổ Công nghệ Thông tin"
-            }
-        ]
-        , []
-    );
-    // Xử lý filter dữ liệu
+    const { data: dataDepartment, isLoading, error } = useGetDepartmentsQuery()
+    const { data: data, refetch } = useGetAllCategoriesQuery()
+    const location = useLocation();
+    useEffect(() => {
+        refetch()
+    }, [location.pathname]);
+    useEffect(() => {
+        refetch();
+    }, [reloadFlag]);
     const filteredData = React.useMemo(() => {
-        if (!searchTerm && !department) return data;
-
-        return data.filter((Category) => {
+        if (!data) return []
+        return data?.data.filter((Category) => {
             const matchesSearch = searchTerm
                 ? Category.categoryName?.toLowerCase().includes(searchTerm.toLowerCase())
                 : true;
@@ -291,34 +50,29 @@ const CategoryTable = ({ onRowSelect }) => {
 
             return matchesSearch && matchesDepartment;
         });
-    }, [searchTerm, data, department]);
-    // Tính toán số lượng trang
-    const pageCount = Math.ceil(filteredData.length / pageSize);
+    }, [searchTerm, data?.data, department]);
+    const pageCount = Math.ceil(filteredData?.length / pageSize);
 
-    // Lấy dữ liệu cho trang hiện tại
     const currentPageData = React.useMemo(() => {
         const startIndex = currentPage * pageSize;
-        return filteredData.slice(startIndex, startIndex + pageSize);
+        return filteredData?.slice(startIndex, startIndex + pageSize);
     }, [currentPage, pageSize, filteredData]);
-    // Hàm xử lý thay đổi số lượng item trên trang
+
     const handlePageSizeChange = (event) => {
         setPageSize(Number(event.target.value));
-        setCurrentPage(0); // Reset về trang đầu tiên khi thay đổi pageSize
+        setCurrentPage(0);
     };
 
-    // Hàm xử lý chuyển trang
     const gotoPage = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
 
-    // Hàm xử lý chuyển đến trang trước
     const previousPage = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1);
         }
     };
 
-    // Hàm xử lý chuyển đến trang sau
     const nextPage = () => {
         if (currentPage < pageCount - 1) {
             setCurrentPage(currentPage + 1);
@@ -368,7 +122,7 @@ const CategoryTable = ({ onRowSelect }) => {
     );
 
     const tableInstance = useTable({
-        columns, data: currentPageData,
+        columns, data: currentPageData ?? [],
         getRowId: (row) => row.categoryID,
     }, useSortBy, useRowSelect);
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, state: { selectedRowIds }, toggleAllRowsSelected } =
@@ -430,7 +184,7 @@ const CategoryTable = ({ onRowSelect }) => {
                             className="search-select"
                         >
                             <option value="">Select a Department</option>
-                            {dataDepartment.map((option) => (
+                            {dataDepartment?.data.map((option) => (
                                 <option key={option.departmentID} value={option.departmentID}>
                                     {option.departmentName}
                                 </option>

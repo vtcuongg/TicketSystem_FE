@@ -1,0 +1,122 @@
+
+.main-container-profile {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #2f363e; /* Light grey background */
+.profile-info-section {
+    display: flex;
+    position: relative;
+    align-items: center; 
+    justify-content: center;
+    z-index: 1;
+    margin-bottom: 20px;
+    
+    .camera-icon{
+        color: #36e9c8;
+        position: absolute;
+        top:80%;
+        font-size: 25px;
+        right: 55%;
+    }
+    .profile-banner {
+    width: 100%;
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.profile-picture {
+    width: 150px; /* Size of the profile picture */
+    height: 150px;
+    border-radius: 50%; /* Makes it circular */
+    border: 5px solid #ffffff; /* White border around the picture */
+    object-fit: cover;
+    margin-right: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align text to the bottom */
+    padding-bottom: 10px; /* Adjust to align with the bottom of the profile picture */
+}
+
+.profile-name {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #36e9c8;
+    margin: 0;
+}
+
+.profile-title {
+    font-size: 1.2em;
+    color: #ffffff;
+    margin: 5px 0;
+}
+
+.profile-email {
+    font-size: 1em;
+    color: #ffffff;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+}
+.profile-detail-container{
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 20px; 
+    padding: 20px; 
+    justify-content: space-between; 
+    .form-group {
+        flex: 1 1 calc(50% - 10px); 
+        max-width: 550px;
+        display: flex;
+        flex-direction: row;
+        align-items: center; 
+        margin-bottom: 15px; 
+      
+            label {
+              margin-bottom: 0; 
+              margin-right: 15px; 
+              font-weight: bold;
+              color: #ecf0f1;
+              flex-basis: 150px;
+              text-align: left; 
+            }
+              input[type="date"],
+              input[type="text"],
+              input[type="email"],
+              select {
+                padding: 10px;
+                border: 1px solid #2f363e;
+                border-radius: 10px;
+                background-color: rgb(36, 41, 45);
+                color: #ecf0f1;
+                font-size: 16px;
+                outline: none;
+                flex-grow: 1;          
+                margin-right: 5px;   
+                &:focus {
+                  border-color: #1abc9c;
+                }
+              }
+                input[type="date"]::-webkit-calendar-picker-indicator {
+                    filter: invert(100%);
+                }
+             .tox.tox-edit-focus .tox-edit-area::before {
+                opacity: 1;
+            }
+         }
+}
+   
+}
+.submit-button{
+        border-radius: 10px;
+        margin-top: 10px;
+        color: #000000;
+        background-color: #36e9c8;
+        padding: 5px;
+    }

@@ -2,39 +2,85 @@ import NavBar from "./NavBar";
 import React, { useMemo, useState, useEffect } from 'react';
 import "../Styles/CreateDepartment.scss"
 import { useParams } from 'react-router-dom';
+import { useAddDepartmentMutation, useGetDepartmentByIdQuery, useUpdateDepartmentMutation } from '../Services/departmentAPI';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
 const CreateDepartment = () => {
+    const navigate = useNavigate()
+    const location = useLocation();
+
     const { id } = useParams();
     const [isUpdate, setIsUpdate] = useState(false);
-    const [departmentId, setDepartmentId] = useState('');
+    const [departmentID, setDepartmentID] = useState('')
     const [departmentName, setDepartmentName] = useState('');
-
-    const handleSubmit = (event) => {
+    const [addDepartment, { isLoading, isSuccess, isError, data, error }] = useAddDepartmentMutation();
+    const [updateDepartment, { isLoading: isUpdating, isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError }] = useUpdateDepartmentMutation();
+    const { data: department, refetch } = useGetDepartmentByIdQuery(id,
+        {
+            skip: !id
+        });
+    useEffect(() => {
+        refetch()
+    }, location)
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        try {
+            if (!isUpdate) {
+                await addDepartment({ departmentName: departmentName });
+                Swal.fire(
+                    'Đã tạo mới thành công !',
+                    'Department đã được tạo thành công.',
+                    'success'
+                );
+                navigate('/department')
+            }
+            else {
+                await updateDepartment({ departmentID: departmentID, departmentName: departmentName });
+                Swal.fire(
+                    'Đã update thành công !',
+                    'Department đã được update thành công.',
+                    'success'
+                );
+                navigate('/department')
+            }
+        } catch (err) {
+            console.error('Lỗi khi thêm phòng ban:', error || err);
+        }
+
 
     };
     useEffect(() => {
         if (id) {
             setIsUpdate(true);
-
         } else {
             setIsUpdate(false);
         }
     }, [id]);
+    useEffect(() => {
+        setDepartmentID(department?.data.departmentID);
+        setDepartmentName(department?.data.departmentName);
+    }, [department])
     return (
         <NavBar title={isUpdate ? "Update Department" : "Create Department"} path="Department">
             <div className="create-department-container">
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="departmentId">ID </label>
-                        <input
-                            type="text"
-                            id="departmentId"
-                            placeholder="ID"
-                            value={departmentId}
-                            onChange={(e) => setDepartmentId(e.target.value)}
-                            required
-                        />
-                    </div>
+                    {location.pathname.includes("/update-department") &&
+                        <div className="form-group">
+                            <label htmlFor="departmenID">Mã phòng ban</label>
+                            <input
+                                type="text"
+                                id="departmentID"
+                                placeholder="ID phòng ban"
+                                value={departmentID}
+                                onChange={(e) => setDepartmentID(e.target.value)}
+                                required
+                                readOnly
+                            />
+                        </div>
+                    }
+
                     <div className="form-group">
                         <label htmlFor="departmentName">Tên phòng ban</label>
                         <input

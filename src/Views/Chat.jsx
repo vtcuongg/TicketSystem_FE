@@ -3,16 +3,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import "../Styles/Chat.scss"
 import { FaSearch, FaPaperclip, FaArrowLeft } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
-import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation } from "../Services/chatApi";
+import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation, useSendMessageMutation } from "../Services/chatApi";
 import { useGetAllUsersQuery } from "../Services/userApi";
 const Chat = () => {
     const [activeChatId, setActiveChatId] = useState(null);
-    const messageContainerRef = useRef(null); // Tạo ref cho message container
+    const messageContainerRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearch, setIsSearch] = useState(false);
     const [user, setUser] = useState(null);
     const [markMessageAsRead] = useMarkMessageAsReadMutation();
+    const [sendMessage] = useSendMessageMutation();
+    const [messageText, setMessageText] = useState("");
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
@@ -56,12 +58,12 @@ const Chat = () => {
     const handleChatItemClick1 = (userId, messageId) => {
         setActiveChatId(userId);
         markMessageAsRead(messageId);
-        refetch()
+        refetchChatData()
     };
 
     const { data: userData, isLoading: isLoadingUserData, error: errorUserData } = useGetAllUsersQuery();
-    const { data: chatData, isLoading: isLoadingChatData, error: errorChatData, refetch } = useGetUserMessagesQuery(user?.id);
-    const { data: ChatDataDetail, isLoading: isLoaidngChatDataDetail, error: errorChatDataDetail } =
+    const { data: chatData, isLoading: isLoadingChatData, error: errorChatData, refetch: refetchChatData } = useGetUserMessagesQuery(user?.id);
+    const { data: ChatDataDetail, isLoading: isLoaidngChatDataDetail, error: errorChatDataDetail, refetch: refetchChatDataDetail } =
         useGetMessagesBetweenUsersQuery({ userId: user?.id, otherUserId: activeChatId });
     const currentChatUser = chatData?.find(user => user.userID === activeChatId);
     const currentChatUser1 = userData?.data.users.find(user => user.id === activeChatId);
@@ -73,7 +75,25 @@ const Chat = () => {
             messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
         }
     }, [filteredChatDetail, activeChatId]);
+    const handleSendMessage = async () => {
+        if (!messageText && selectedFiles.length === 0) return;
 
+        try {
+            await sendMessage({
+                senderId: user?.id,
+                receiverId: activeChatId,
+                content: messageText,
+                attachments: selectedFiles
+            }).unwrap();
+
+            setMessageText("");
+            setSelectedFiles([]);
+            refetchChatData();
+            refetchChatDataDetail()
+        } catch (error) {
+            console.error("Failed to send message:", error);
+        }
+    };
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
         const today = new Date();
@@ -173,7 +193,7 @@ const Chat = () => {
                                                 <div className={`user-name ${activeChatId === chat.userID ? 'active' : ''}`}>{chat.fullName}</div>
                                                 <div className={`last-message ${!chat.isRead ? 'unread' : ''}`}>
                                                     {chat.lastMessageSenderID === user?.id ? 'Bạn: ' : ''}
-                                                    {chat.lastMessageContent}
+                                                    {chat.lastMessageContent ? chat.lastMessageContent : "Bạn vừa gửi 1 file đính kèm"}
                                                 </div>
                                             </div>
                                             <div className="last-active">{getTimeDifference(chat.lastMessageTime)}</div>
@@ -265,7 +285,9 @@ const Chat = () => {
                                 </div>
                                 <div className="chat-input-area">
                                     <div className="input-field">
-                                        <input type="text" placeholder="Write your message..." />
+                                        <input type="text" placeholder="Write your message..."
+                                            value={messageText}
+                                            onChange={(e) => setMessageText(e.target.value)} />
                                     </div>
                                     <div className="input-actions">
                                         <div className="attach-icon" onClick={() => document.getElementById('fileInput').click()} >
@@ -278,7 +300,7 @@ const Chat = () => {
                                             style={{ display: 'none' }}
                                             onChange={handleFileChange}
                                         />
-                                        <button className="send-button">
+                                        <button className="send-button" onClick={handleSendMessage}>
                                             Send
                                         </button>
                                     </div>
