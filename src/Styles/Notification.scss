@@ -1,0 +1,97 @@
+
+.notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0; 
+    background-color: #2f363e;
+    border: 1px solid #8f9091;
+    border-radius: 20px;
+    width: 350px; 
+    height: 600px;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 15px;
+    transform-origin: top right;
+    animation: fadeIn 0.2s ease-out;
+    margin-top: 20px;
+     margin-right: -160px;
+    h3 {
+        font-size: 1.1rem;
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #ffffff;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    .notification-list {
+        .notification-item {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            border-radius: 20px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: #24292d;
+            }
+
+            &.unread {
+                background-color: #e6f7ff;
+                font-weight: bold;
+            }
+
+            .notification-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 5px;
+
+                .notification-title {
+                    font-size: 17px;
+                    color: #ffffff;
+                }
+
+                .notification-time {
+                    font-size: 15px;
+                    color: #ffffff;
+                }
+            }
+
+            .notification-message {
+                font-size: 0.85rem;
+                color: #a5a5a5;
+                line-height: 1.4;
+            }
+        }
+    }
+
+    .no-notifications {
+        text-align: center;
+        padding: 20px;
+        color: #888;
+        font-style: italic;
+    }
+
+}
+.icon-wrapper {
+    position: relative; 
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

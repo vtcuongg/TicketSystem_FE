@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../Styles/NavBar.scss';
+import '../Styles/Notification.scss';
 import logo from '../assets/Images/logo.png'
 import avatar from '../assets/Images/avatar-df.png';
 import { FaBuilding, FaTasks, FaArrowLeft, FaSearch, FaCog, FaBell, FaCommentDots, FaBars, FaChevronDown, FaArrowRight, FaCaretLeft, FaFacebookMessenger, FaPaperclip } from 'react-icons/fa';
@@ -11,7 +12,8 @@ import {
     FaUsers
 } from 'react-icons/fa';
 import { useGetAllUsersQuery } from "../Services/userApi";
-import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation } from "../Services/chatApi";
+import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useSendMessageMutation } from "../Services/chatApi";
+import { useGetNotificationByIdQuery } from "../Services/NotificationApi"
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
@@ -37,6 +39,9 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
     const [user, setUser] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [messageText, setMessageText] = useState("");
+
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
@@ -61,7 +66,30 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     }, []);
 
     const navigate = useNavigate();
+    const { data: NotificaitonData, isLoading: isLoadingNotificaitonData, error: errorNotificaitonData } = useGetNotificationByIdQuery(
+        user?.id,
+        { skip: !user }
+    );
+    const [sendMessage] = useSendMessageMutation();
+    const handleSendMessage = async () => {
+        if (!messageText && selectedFiles.length === 0) return;
 
+        try {
+            await sendMessage({
+                senderId: user?.id,
+                receiverId: activeChatId,
+                content: messageText,
+                attachments: selectedFiles
+            }).unwrap();
+
+            setMessageText("");
+            setSelectedFiles([]);
+            refetchChatData();
+            refetchChatDataDetail()
+        } catch (error) {
+            console.error("Failed to send message:", error);
+        }
+    }
     useEffect(() => {
         if (title == "Chat") {
             setIsChatOpen(true);
@@ -81,6 +109,11 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsDepartmentOpen(false);
         setIsUserOpen(false);
 
+    };
+    const toggleNotificationOpen = () => {
+        setIsNotificationOpen(!isNotificationOpen);
+        setIsChatListOpen(false);
+        setIsDropdownAvatarOpen(false);
     };
     const toggleDapartment = () => {
         setIsDepartmentOpen(!isDepartmentOpen);
@@ -123,39 +156,6 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsChatDetailOpen(true);
         setIsChatListOpen(false)
     };
-    const getTimeDifference = (dateTimeString) => {
-        const now = new Date();
-        const past = new Date(dateTimeString);
-        const diffInSeconds = Math.floor((now - past) / 1000);
-
-        if (diffInSeconds < 60) {
-            return `${diffInSeconds} giây trước`;
-        } else if (diffInSeconds < 3600) {
-            const diffInMinutes = Math.floor(diffInSeconds / 60);
-            return `${diffInMinutes} phút trước`;
-        } else if (diffInSeconds < 86400) {
-            const diffInHours = Math.floor(diffInSeconds / 3600);
-            return `${diffInHours} giờ trước`;
-        } else {
-            const diffInDays = Math.floor(diffInSeconds / 86400);
-            return `${diffInDays} ngày trước`;
-        }
-    };
-    const { data: userData, isLoading: isLoadingUserData, error: errorUserData } = useGetAllUsersQuery();
-    const { data: chatData, isLoading: isLoadingChatData, error: errorChatData, refetch } = useGetUserMessagesQuery(user?.id);
-    const { data: ChatDataDetail, isLoading: isLoaidngChatDataDetail, error: errorChatDataDetail } =
-        useGetMessagesBetweenUsersQuery({ userId: user?.id, otherUserId: activeChatId });
-    const currentChatUser = chatData?.find(user => user.userID === activeChatId);
-    const currentChatUser1 = userData?.data.users.find(user => user.id === activeChatId);
-    const filteredChatDetail = ChatDataDetail?.filter(
-        msg => (msg.senderID === user?.id && msg.receiverID === activeChatId) || (msg.senderID === activeChatId && msg.receiverID === user?.id)
-    );
-    useEffect(() => {
-        if (messageContainerRef.current) {
-            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-        }
-    }, [filteredChatDetail, activeChatId]);
-
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
         const today = new Date();
@@ -175,11 +175,51 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         }
     };
 
+    const getTimeDifference = (dateTimeString) => {
+        const now = new Date();
+        const past = new Date(dateTimeString);
+        const nowVN = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+        const pastVN = new Date(past.toLocaleString('', { timeZone: 'Asia/Ho_Chi_Minh' }));
+        const diffInSeconds = Math.floor((nowVN - pastVN) / 1000);
+
+        console.log(now, past)
+        if (diffInSeconds < 60) {
+            return `${diffInSeconds} giây trước`;
+        } else if (diffInSeconds < 3600) {
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            return `${diffInMinutes} phút trước`;
+        } else if (diffInSeconds < 86400) {
+            const diffInHours = Math.floor(diffInSeconds / 3600);
+            return `${diffInHours} giờ trước`;
+        } else {
+            const diffInDays = Math.floor(diffInSeconds / 86400);
+            return `${diffInDays} ngày trước`;
+        }
+    };
+    const { data: userData, isLoading: isLoadingUserData, error: errorUserData } = useGetAllUsersQuery();
+    const { data: chatData, isLoading: isLoadingChatData, error: errorChatData, refetch: refetchChatData } = useGetUserMessagesQuery(user?.id);
+    const { data: ChatDataDetail, isLoading: isLoaidngChatDataDetail, error: errorChatDataDetail, refetch: refetchChatDataDetail } =
+        useGetMessagesBetweenUsersQuery({ userId: user?.id, otherUserId: activeChatId });
+    const currentChatUser = chatData?.find(user => user.userID === activeChatId);
+    const currentChatUser1 = userData?.data.users.find(user => user.id === activeChatId);
+    const filteredChatDetail = ChatDataDetail?.filter(
+        msg => (msg.senderID === user?.id && msg.receiverID === activeChatId) || (msg.senderID === activeChatId && msg.receiverID === user?.id)
+    );
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    }, [filteredChatDetail, activeChatId]);
+
+
+
     const toggleDropdownAvatar = () => {
         setIsDropdownAvatarOpen(!isDropdownAvatarOpen);
+        setIsNotificationOpen(false);
     };
     const toggleChatListOpen = () => {
         setIsChatListOpen(!isChatListOpen);
+        setIsNotificationOpen(false);
     };
     const toggleChatDetailtOpen = () => {
         setIsChatDetailOpen(false);
@@ -233,6 +273,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsCustomerOpen(false)
     };
 
+    console.log(NotificaitonData)
     if (user != null && chatData && userData) {
         return (
             <div className="layout-container">
@@ -345,8 +386,32 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                     </div>
                                 )}
 
-                                <div className="icon-wrapper with-dot">
+                                <div className="icon-wrapper with-dot" onClick={toggleNotificationOpen}>
                                     <FaBell />
+                                    {isNotificationOpen && (
+                                        <div className="notification-dropdown" onClick={(e) => e.stopPropagation()}>
+                                            <h3>Thông báo</h3>
+                                            <div className="notification-list">
+                                                {NotificaitonData?.data.length > 0 ? (
+                                                    NotificaitonData.data.map((notification) => (
+                                                        <div key={notification.notificationID} className="notification-item">
+                                                            <div className="notification-content">
+                                                                <span className="notification-title">Ticket {notification.ticketID}</span>
+                                                                <span className="notification-time"> {getTimeDifference(notification.createdAt)}</span>
+                                                            </div>
+                                                            <div className="notification-message">
+                                                                {notification.message}
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    !isLoadingNotificaitonData && !errorNotificaitonData && (
+                                                        <p style={{ fontSize: "18px", color: "#999" }}>Không có thông báo mới.</p>
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="user-info" onClick={toggleDropdownAvatar}>
@@ -630,7 +695,9 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                     </div>
                                     <div className="chat-input-area">
                                         <div className="input-field">
-                                            <input type="text" placeholder="Write your message..." />
+                                            <input type="text" placeholder="Write your message..."
+                                                value={messageText}
+                                                onChange={(e) => setMessageText(e.target.value)} />
                                         </div>
                                         <div className="input-actions">
                                             <div className="attach-icon" onClick={() => document.getElementById('fileInput').click()} >
@@ -643,7 +710,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                 style={{ display: 'none' }}
                                                 onChange={handleFileChange}
                                             />
-                                            <button className="send-button">
+                                            <button className="send-button" onClick={handleSendMessage}>
                                                 Send
                                             </button>
                                         </div>
