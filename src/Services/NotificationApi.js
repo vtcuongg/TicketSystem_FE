@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const NotificationApi = createApi({
     reducerPath: 'NotificationApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://localhost:7198/',
+        baseUrl: 'https://vietcuong-001-site1.jtempurl.com/',
         prepareHeaders: (headers) => {
             const token = localStorage.getItem('authToken');
             if (token) {
