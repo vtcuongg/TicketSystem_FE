@@ -96,19 +96,20 @@ const Chat = () => {
     };
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
+        const vnDate = new Date(date.getTime() + 7 * 60 * 60 * 1000);
         const today = new Date();
-        const isToday = date.toDateString() === today.toDateString();
+        const isToday = vnDate.toDateString() === today.toDateString();
 
         if (isToday) {
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const hours = vnDate.getHours().toString().padStart(2, '0');
+            const minutes = vnDate.getMinutes().toString().padStart(2, '0');
             return `${hours}:${minutes}`;
         } else {
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear();
+            const hours = vnDate.getHours().toString().padStart(2, '0');
+            const minutes = vnDate.getMinutes().toString().padStart(2, '0');
+            const day = vnDate.getDate().toString().padStart(2, '0');
+            const month = (vnDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = vnDate.getFullYear();
             return `${hours}:${minutes} , ${day}/${month}/${year}`;
         }
     };
@@ -116,8 +117,9 @@ const Chat = () => {
     const getTimeDifference = (dateTimeString) => {
         const now = new Date();
         const past = new Date(dateTimeString);
-        const diffInSeconds = Math.floor((now - past) / 1000);
-
+        const pastVN = new Date(past.getTime() + 7 * 60 * 60 * 1000);
+        const diffInSeconds = Math.floor((now - pastVN) / 1000);
+        console.log(now, pastVN)
         if (diffInSeconds < 60) {
             return `${diffInSeconds} giây trước`;
         } else if (diffInSeconds < 3600) {
@@ -149,11 +151,11 @@ const Chat = () => {
                             <div className="user-list">
                                 <h2>List User</h2>
                                 {userData?.data.users.filter(user =>
-                                    user.userName.toLowerCase().includes(searchTerm.toLowerCase())
+                                    user.userName?.toLowerCase().includes(searchTerm?.toLowerCase())
                                 ).length > 0 ? (
                                     userData?.data.users
                                         .filter(user =>
-                                            user.userName.toLowerCase().includes(searchTerm.toLowerCase())
+                                            user.userName?.toLowerCase().includes(searchTerm?.toLowerCase())
                                         )
                                         .map(user => (
                                             <div className="user-item" key={user.userID} onClick={() => {
