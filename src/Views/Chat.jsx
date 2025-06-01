@@ -270,7 +270,7 @@ const Chat = () => {
                                 <div className="attachment-container">
                                     {selectedFiles.length > 0 && (
                                         <div className="attachments-preview">
-                                            <div className="attachments-list"> {/* Sử dụng div để chứa các thẻ */}
+                                            <div className="attachments-list">
                                                 {Array.from(selectedFiles).map((file, index) => (
                                                     <div key={file.name} className="attachment-item">
                                                         <span>{file.name}</span>

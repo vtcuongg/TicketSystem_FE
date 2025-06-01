@@ -225,7 +225,7 @@
                                     border-radius: 50%;
                                     overflow: hidden;
                                     margin-right: 10px;
-                                    background-color: #3e4042; /* Màu nền mặc định cho avatar */
+                                    background-color: #3e4042; 
                                     display: flex;
                                     justify-content: center;
                                     align-items: center;
@@ -270,7 +270,7 @@
                                 background-color: #24292d;
                                 }
                                 &.active {
-                                    background-color: #24292d; /* Example active background color */
+                                    background-color: #24292d; 
                                     font-weight: bold;
                                     }
                                 .online-status {
@@ -280,10 +280,10 @@
                                     width: 12px;
                                     height: 12px;
                                     border-radius: 50%;
-                                    border: 2px solid #fff; /* White border for better visibility */
+                                    border: 2px solid #fff; 
                                     visibility: hidden;
                                     &.online {
-                                    background-color: #4caf50; /* Green color for online */
+                                    background-color: #4caf50;
                                     visibility: inherit;
                                     }
                                     }
@@ -368,13 +368,13 @@
                         padding-right: 25px;
                         cursor: pointer;
                         .dropdown {
-                            position: absolute; /* Để định vị dropdown */
-                            top: 10%; /* Hiển thị ngay dưới phần tử cha */
-                            right: 20px; /* Căn phải nếu cần */
-                            background-color: #282c34; /* Màu nền tối như trong ảnh */
+                            position: absolute; 
+                            top: 10%;
+                            right: 20px; 
+                            background-color: #282c34; 
                             border-radius: 5px;
                             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                            z-index: 1000; /* Đảm bảo nó ở trên các phần tử khác */
+                            z-index: 1000; 
                             margin-top: 5px;
                             width: 200px;
                           .dropdown-item {
@@ -595,7 +595,7 @@
                                 text-align: left;
                                 margin-left: 10%; 
                                 &:hover {
-                                    color: #ffffff; /* Đổi màu chữ khi hover */
+                                    color: #ffffff; 
                                 }
                             }
                         }
@@ -615,7 +615,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            overflow: hidden; /* Ngăn tràn */
+            overflow: hidden;
             background-color:   rgb(36, 41, 45);
             .Header-Link{
                 font-size: 20px;
@@ -835,8 +835,8 @@
                          margin-right: 20px;
                     }
                     .attachment-item {
-                      background-color: #4a5568; /* Màu nền của thẻ */
-                      color: #f7fafc; /* Màu chữ */
+                      background-color: #4a5568; 
+                      color: #f7fafc; 
                       border-radius: 5px;
                       padding: 8px 12px;
                       display: flex;
@@ -848,10 +848,10 @@
                     }
                     
                     .remove-attachment {
-                      background-color: #e53e3e; /* Màu nền nút xóa */
-                      color: #f7fafc; /* Màu chữ nút xóa */
+                      background-color: #e53e3e; 
+                      color: #f7fafc; 
                       border: none;
-                      border-radius: 50%; /* Tạo hình tròn */
+                      border-radius: 50%; 
                       width: 20px;
                       height: 20px;
                       display: flex;
@@ -914,7 +914,7 @@
             }
             
             .send-button {
-                background-color: #14b8a6; /* Teal color */
+                background-color: #14b8a6;
                 color: #f1f5f9;
                 border: none;
                 padding: 10px 15px;
@@ -943,20 +943,20 @@
     }
     }
     ::-webkit-scrollbar {
-        width: 8px; /* Độ rộng thanh cuộn dọc */
-        height: 8px; /* Độ cao thanh cuộn ngang (nếu có) */
+        width: 8px; 
+        height: 8px; 
     }
     
     ::-webkit-scrollbar-track {
-        background: #2f363e; /* Màu nền track */
+        background: #2f363e; 
     }
     
     ::-webkit-scrollbar-thumb {
-        background: #888; /* Màu cục cuộn */
+        background: #888; 
         border-radius: 4px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: #aaa; /* Hover sáng màu hơn tí */
+        background: #aaa; 
     }
   }

@@ -46,20 +46,20 @@
         margin-top: 20px;
     }
     ::-webkit-scrollbar {
-        width: 8px; /* Độ rộng thanh cuộn dọc */
-        height: 8px; /* Độ cao thanh cuộn ngang (nếu có) */
+        width: 8px; 
+        height: 8px; 
       }
     
       ::-webkit-scrollbar-track {
-        background: #2f363e; /* Màu nền track */
+        background: #2f363e;
       }
     
       ::-webkit-scrollbar-thumb {
-        background: #888; /* Màu cục cuộn */
+        background: #888;
         border-radius: 4px;
       }
     
       ::-webkit-scrollbar-thumb:hover {
-        background: #aaa; /* Hover sáng màu hơn tí */
+        background: #aaa;
       }
 }

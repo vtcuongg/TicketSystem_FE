@@ -29,7 +29,6 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
             setIsFeedBack(true)
         }
     }, [feedbackData, error, ticketId]);
-    console.log(isFeedBack)
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -48,7 +47,7 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
         };
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null; // Không render gì nếu modal không mở
+    if (!isOpen) return null;
 
     const handleSubmit = () => {
         if (rating === 0) {

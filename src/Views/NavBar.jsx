@@ -178,11 +178,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const getTimeDifference = (dateTimeString) => {
         const now = new Date();
         const past = new Date(dateTimeString);
-        const nowVN = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-        const pastVN = new Date(past.toLocaleString('', { timeZone: 'Asia/Ho_Chi_Minh' }));
-        const diffInSeconds = Math.floor((nowVN - pastVN) / 1000);
-
-        console.log(now, past)
+        const diffInSeconds = Math.floor((now - past) / 1000);
         if (diffInSeconds < 60) {
             return `${diffInSeconds} giây trước`;
         } else if (diffInSeconds < 3600) {
@@ -272,8 +268,6 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsTicketOpen(false)
         setIsCustomerOpen(false)
     };
-
-    console.log(NotificaitonData)
     if (user != null && chatData && userData) {
         return (
             <div className="layout-container">
@@ -680,7 +674,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                     <div className="attachment-container">
                                         {selectedFiles.length > 0 && (
                                             <div className="attachments-preview">
-                                                <div className="attachments-list"> {/* Sử dụng div để chứa các thẻ */}
+                                                <div className="attachments-list">
                                                     {Array.from(selectedFiles).map((file, index) => (
                                                         <div key={file.name} className="attachment-item">
                                                             <span>{file.name}</span>

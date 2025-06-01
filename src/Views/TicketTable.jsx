@@ -31,8 +31,8 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [assignFeedBack, setAssignFeedBack] = useState([])
     const [user, setUser] = useState(null);
-    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false); // State để điều khiển modal
-    const [selectedTicketIdForRating, setSelectedTicketIdForRating] = useState(null); // State để lưu ID của ticket đang được đánh giá
+    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+    const [selectedTicketIdForRating, setSelectedTicketIdForRating] = useState(null);
     const [postFeedback] = usePostFeedbackMutation();
     const [postFeedbackAssignee] = usePostFeedbackAssigneeMutation();
     const handleOpenRatingModal = useCallback((ticketId, assignedUsers) => {
@@ -40,7 +40,6 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
         setIsRatingModalOpen(true);
         setAssignFeedBack(assignedUsers)
     }, []);
-    console.log(assignFeedBack)
     const handleCloseRatingModal = useCallback(() => {
         setIsRatingModalOpen(false);
         setSelectedTicketIdForRating(null);
@@ -93,7 +92,6 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                 text: 'Cảm ơn bạn đã dành thời gian để đánh giá',
             });
         } catch (err) {
-            console.log(err)
         }
 
     }, [selectedTicketIdForRating]);
@@ -232,7 +230,6 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                             }}>
                                 Chưa được phân công</span>;
                         }
-                        // setAssignFeedBack(value.map(user => user?.id))
                         return (
                             <div>
                                 {value.map((user) => (
@@ -466,7 +463,6 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     </div>
                 </div>
             )}
-            {/* Thêm RatingModal ở đây */}
             <RatingModal
                 isOpen={isRatingModalOpen}
                 onClose={handleCloseRatingModal}

@@ -137,8 +137,6 @@ const CreateUser = () => {
         setCreatedAt(User?.data.createdAt.slice(0, 10))
         setAvatar(User?.data.avatar)
     }, [User])
-    console.log(User)
-
     return (
         <NavBar title={isUpdate ? "Update User" : "Create User"} path="Users">
             <div className="create-user-container">

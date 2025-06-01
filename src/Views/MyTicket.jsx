@@ -83,7 +83,6 @@ const MyTicket = () => {
                     </div>
                 </div>
                 <div className="Main-Inner">
-                    {/* <TicketTable /> */}
                     <TicketTable onRowSelect={handleRowSelect} reloadFlag={reloadFlag} />
                 </div>
             </div>

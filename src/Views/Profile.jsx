@@ -40,12 +40,10 @@ const Profile = () => {
         try {
             await updateUserStatus({ userId: id, newStatus: newStatusValue }).unwrap();
         } catch (err) {
-            console.log(err)
         }
     };
 
     const handleAvatarChange = async (e) => {
-        console.log("vào")
         const file = e.target.files[0];
         if (!file) {
             return;

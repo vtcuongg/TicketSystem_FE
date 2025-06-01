@@ -183,6 +183,5 @@ const Report = () => {
             </div>
         </NavBar>
     )
-    // }
 }
 export default Report;

@@ -1,11 +1,11 @@
 .ticket-table-wrapper {
   width: 100%;
-  -webkit-overflow-scrolling: touch; /* Kéo mượt trên mobile */
+  -webkit-overflow-scrolling: touch; 
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow-x: auto; /* Chỉ cho phép scroll ngang */
-  overflow-y: visible; /* Quan trọng: KHÔNG khóa chiều cao bảng */
+  overflow-x: auto; 
+  overflow-y: visible; 
   background-color: #2f363e;
   .Table-Header {
     display: flex;
@@ -78,7 +78,7 @@
     background-color: #2f363e;
     color: #fff;
     font-weight: 400;
-    min-width: 1200px; /* Table rộng hơn form */
+    min-width: 1200px;
     th{
       width: auto;
       font-weight: 900;

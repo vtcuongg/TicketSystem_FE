@@ -104,7 +104,7 @@
               
             .chat-list {
                 overflow-y: auto;
-                height: calc(100vh - 150px); /* Adjust based on header and search bar height */
+                height: calc(100vh - 150px);
                 .empty-chat-message{
                     color: #fff;
                     margin-left: 20px;
@@ -123,7 +123,7 @@
                 background-color: #24292d;
                 }
                 &.active {
-                    background-color: #24292d; /* Example active background color */
+                    background-color: #24292d; 
                     font-weight: bold;
                     }
                 .online-status {
@@ -133,10 +133,10 @@
                     width: 12px;
                     height: 12px;
                     border-radius: 50%;
-                    border: 2px solid #fff; /* White border for better visibility */
+                    border: 2px solid #fff; 
                     visibility: hidden;
                     &.online {
-                    background-color: #4caf50; /* Green color for online */
+                    background-color: #4caf50;
                     visibility: inherit;
                     }
                     }
@@ -165,7 +165,7 @@
             
                 .message-info {
                 flex-grow: 1;
-                min-width: 0; /* Prevent overflow */
+                min-width: 0; 
             
                 .user-name {
                 font-weight: bold;
@@ -388,8 +388,8 @@
                              margin-right: 20px;
                         }
                         .attachment-item {
-                          background-color: #4a5568; /* Màu nền của thẻ */
-                          color: #f7fafc; /* Màu chữ */
+                          background-color: #4a5568; 
+                          color: #f7fafc; 
                           border-radius: 5px;
                           padding: 8px 12px;
                           display: flex;
@@ -401,10 +401,10 @@
                         }
                         
                         .remove-attachment {
-                          background-color: #e53e3e; /* Màu nền nút xóa */
-                          color: #f7fafc; /* Màu chữ nút xóa */
+                          background-color: #e53e3e; 
+                          color: #f7fafc;
                           border: none;
-                          border-radius: 50%; /* Tạo hình tròn */
+                          border-radius: 50%; 
                           width: 20px;
                           height: 20px;
                           display: flex;
@@ -434,7 +434,7 @@
                         background: none;
                         border: none;
                         color: #f1f5f9;
-                        width: 400px;
+                        width: 460px;
                         font-size: 1rem;
                         outline: none;
                         &::placeholder {
@@ -466,7 +466,7 @@
                 }
                 
                 .send-button {
-                    background-color: #14b8a6; /* Teal color */
+                    background-color: #14b8a6; 
                     color: #f1f5f9;
                     border: none;
                     padding: 10px 15px;
@@ -498,20 +498,20 @@
             
         }
         ::-webkit-scrollbar {
-            width: 8px; /* Độ rộng thanh cuộn dọc */
-            height: 8px; /* Độ cao thanh cuộn ngang (nếu có) */
+            width: 8px; 
+            height: 8px; 
         }
         
         ::-webkit-scrollbar-track {
-            background: #2f363e; /* Màu nền track */
+            background: #2f363e; 
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #888; /* Màu cục cuộn */
+            background: #888; 
             border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #aaa; /* Hover sáng màu hơn tí */
+            background: #aaa;
         }
     }

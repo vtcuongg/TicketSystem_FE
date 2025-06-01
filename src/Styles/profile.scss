@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: #2f363e; /* Light grey background */
+    background-color: #2f363e; 
 .profile-info-section {
     display: flex;
     position: relative;
@@ -21,15 +21,15 @@
     }
     .profile-banner {
     width: 100%;
-    object-fit: cover; /* Ensures the image covers the area without distortion */
+    object-fit: cover;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 .profile-picture {
-    width: 150px; /* Size of the profile picture */
+    width: 150px; 
     height: 150px;
-    border-radius: 50%; /* Makes it circular */
-    border: 5px solid #ffffff; /* White border around the picture */
+    border-radius: 50%;
+    border: 5px solid #ffffff;
     object-fit: cover;
     margin-right: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -38,8 +38,8 @@
 .profile-details {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Align text to the bottom */
-    padding-bottom: 10px; /* Adjust to align with the bottom of the profile picture */
+    justify-content: flex-end; 
+    padding-bottom: 10px; 
 }
 
 .profile-name {

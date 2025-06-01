@@ -1,16 +1,14 @@
-/* Styles/RatingModal.scss */
-
 .rating-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); // Lớp phủ mờ
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; // Đảm bảo modal ở trên cùng
+    z-index: 1000; 
 }
 
 .rating-modal {
@@ -34,7 +32,7 @@
     .stars-container {
         display: flex;
         justify-content: center;
-        gap: 5px; // Khoảng cách giữa các ngôi sao
+        gap: 5px; 
         cursor: pointer;
 
         .star {
@@ -46,19 +44,19 @@
     }
 
     .comment-textarea {
-        width: calc(100% - 20px); // Trừ padding
+        width: calc(100% - 20px);  
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 1em;
-        resize: vertical; // Cho phép thay đổi kích thước theo chiều dọc
+        resize: vertical; 
         min-height: 80px;
     }
 
     .modal-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 15px; // Khoảng cách giữa các nút
+        gap: 15px; 
 
         button {
             padding: 10px 20px;
@@ -77,10 +75,10 @@
             }
 
             &.submit-btn {
-                background-color: #007bff; // Màu xanh dương
+                background-color: #007bff; 
                 color: white;
                 &:hover {
-                    background-color: #0056b3; // Màu xanh đậm hơn khi hover
+                    background-color: #0056b3;
                 }
             }
         }

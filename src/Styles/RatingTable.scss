@@ -76,7 +76,7 @@
     background-color: #2f363e;
     color: #fff;
     font-weight: 400;
-    min-width: 1200px; /* Table rộng hơn form */
+    min-width: 1200px; 
     th{
       width: auto;
       font-weight: 900;
@@ -100,10 +100,10 @@
   }
   
   .reply-count-cell span {
-      background-color: #b1eeb1; /* Màu xanh lá cây nhạt */
-      color: #008000; /* Màu xanh lá cây đậm cho số */
-      border-radius: 8px; /* Bo tròn góc */
-      padding: 8px 14px; /* Khoảng cách bên trong */
+      background-color: #b1eeb1;
+      color: #008000; 
+      border-radius: 8px; 
+      padding: 8px 14px; 
       font-weight: bold;
       font-size: 16px;
     }
