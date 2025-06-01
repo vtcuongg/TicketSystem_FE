@@ -44,7 +44,7 @@ const Login = ({ setConnection }) => {
 
             dispatch(setUser(result.user));
             const newConnection = new signalR.HubConnectionBuilder()
-                .withUrl("https://localhost:7198/chathub", {
+                .withUrl("https://vietcuong-001-site1.jtempurl.com/chathub", {
                     accessTokenFactory: () => result.token,
                 })
                 .withAutomaticReconnect()

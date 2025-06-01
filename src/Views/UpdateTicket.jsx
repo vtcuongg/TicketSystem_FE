@@ -418,7 +418,7 @@ const UpdateTicket = () => {
                                 </div>
                                 {attachments?.length > 0 && (
                                     <div className="attachments-preview">
-                                        <div className="attachments-list"> {/* Sử dụng div để chứa các thẻ */}
+                                        <div className="attachments-list">
                                             {Array.from(attachments).map((file, index) => (
                                                 <div key={file.fileName ? file.fileName : file.name} className="attachment-item">
                                                     <span>{file.fileName ? file.fileName : file.name}</span>
