@@ -16,9 +16,15 @@ export const NotificationApi = createApi({
         getNotificationById: builder.query({
             query: (userId) => `api/Notification/${userId}`,
         }),
-
+        createNotification: builder.mutation({
+            query: (newNotification) => ({
+                url: 'api/Notification',
+                method: 'POST',
+                body: newNotification,
+            }),
+        }),
     }),
 });
 
-export const { useGetNotificationByIdQuery } = NotificationApi;
+export const { useGetNotificationByIdQuery, useCreateNotificationMutation } = NotificationApi;
 

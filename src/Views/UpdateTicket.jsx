@@ -14,6 +14,8 @@ import Swal from 'sweetalert2';
 import { useLocation } from 'react-router-dom';
 import { useAssignUsersToTicketMutation } from '../Services/ticketAssignmentApi';
 import { jwtDecode } from 'jwt-decode';
+import { useCreateNotificationMutation } from "../Services/NotificationApi"
+
 const UpdateTicket = () => {
     const location = useLocation();
     const { id } = useParams();
@@ -100,6 +102,7 @@ const UpdateTicket = () => {
         }));
     };
     const [updateTicket, { isLoading, isSuccess, error }] = useUpdateTicketMutation();
+    const [createNotification, { isLoading: isLoadingCreate }] = useCreateNotificationMutation();
     const [assignToUser] = useAssignUsersToTicketMutation();
     const handleEditorChange = (content, editor) => {
         setFormData(prev => ({
@@ -107,6 +110,7 @@ const UpdateTicket = () => {
             Description: content,
         }));
     };
+
     const PriorityOptions = useMemo(() => [
         { value: '1', label: 'Thấp' },
         { value: '2', label: 'Trung bình' },
@@ -117,7 +121,7 @@ const UpdateTicket = () => {
     const StatusOptions = useMemo(() => [
         { value: '1', label: 'Mới' },
         { value: '2', label: 'Đang xử lý' },
-        { value: '3', label: 'Chờ xác nhậnnhận' },
+        { value: '3', label: 'Chờ xác nhận' },
         { value: '4', label: 'Hoàn thành' },
         { value: '5', label: 'Đã hủy' },
         { value: '6', label: 'Cháy Deadline' },
@@ -157,6 +161,45 @@ const UpdateTicket = () => {
                 assignedToList: assignedUserIds
             };
             await assignToUser(assignPayload).unwrap();
+
+            const senderID = user?.id
+            const receiverIDs = [formData.createdBy, ...assignedUserIds];
+            const now = new Date().toISOString();
+            const getNotificationMessage = (status, ticketID, receiverID, assignedUserIds, createdBy) => {
+                if (status === 'Đang xử lý') {
+                    if (receiverID === createdBy) {
+                        return `Ticket #${ticketID} đang được xử lý.`;
+                    }
+                    if (assignedUserIds.includes(receiverID)) {
+                        return `Ticket #${ticketID} đã được giao đến cho bạn.`;
+                    }
+                }
+                switch (status) {
+                    case 'Chờ xác nhận':
+                        return `Ticket #${ticketID} đang chờ xác nhận nhận.`;
+                    case 'Hoàn thành':
+                        return `Ticket #${ticketID} đã được hoàn thành.`;
+                    case 'Đã hủy':
+                        return `Ticket #${ticketID} đã bị hủy.`;
+                    case 'Cháy Deadline':
+                        return `Ticket #${ticketID} đã cháy deadline!`;
+                    default:
+                        return `Ticket #${ticketID} đã được cập nhật.`;
+                }
+            };
+            console.log(status)
+            for (const receiverID of receiverIDs) {
+                const message = getNotificationMessage(formData.Status, formData.ticketID, receiverID, assignedUserIds, formData.createdBy);
+                const notificationPayload = {
+                    senderID: senderID,
+                    receiverID: receiverID,
+                    ticketID: formData.ticketID,
+                    message: message,
+                    isRead: false,
+                    createdAt: now,
+                };
+                await createNotification(notificationPayload).unwrap();
+            }
 
             Swal.fire(
                 'Thành công!',

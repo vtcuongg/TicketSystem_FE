@@ -66,7 +66,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     }, []);
 
     const navigate = useNavigate();
-    const { data: NotificaitonData, isLoading: isLoadingNotificaitonData, error: errorNotificaitonData } = useGetNotificationByIdQuery(
+    const { data: NotificaitonData, isLoading: isLoadingNotificaitonData, error: errorNotificaitonData, refetch: refetchNotification } = useGetNotificationByIdQuery(
         user?.id,
         { skip: !user }
     );
@@ -111,9 +111,11 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
 
     };
     const toggleNotificationOpen = () => {
+
         setIsNotificationOpen(!isNotificationOpen);
         setIsChatListOpen(false);
         setIsDropdownAvatarOpen(false);
+        refetchNotification()
     };
     const toggleDapartment = () => {
         setIsDepartmentOpen(!isDepartmentOpen);
@@ -219,10 +221,11 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const toggleChatListOpen = () => {
         setIsChatListOpen(!isChatListOpen);
         setIsNotificationOpen(false);
+        refetchChatData()
     };
     const toggleChatDetailtOpen = () => {
         setIsChatDetailOpen(false);
-
+        refetchChatDataDetail()
     };
 
     const handleMouseEnter = (string) => {
@@ -260,6 +263,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsReportOpen(false);
         setIsCustomerOpen(false)
         setIsTicketOpen(false)
+        refetchChatData()
     };
     const toggleCustomertMenu = () => {
         setIsCustomerOpen(!isCustomerOpen);
