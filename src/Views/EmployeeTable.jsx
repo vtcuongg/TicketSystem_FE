@@ -123,22 +123,22 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
                 ),
             },
             {
-                Header: "Họ và tên", accessor: "userName",
+                Header: "Name", accessor: "userName",
                 Cell: ({ value }) => (
                     <span className="single-line-cell">{value}</span>
                 )
 
             },
             { Header: "Email", accessor: "email" },
-            { Header: "SĐT", accessor: "phoneNumber" },
+            { Header: "Phone", accessor: "phoneNumber" },
             {
-                Header: "Ngày sinh",
+                Header: "Date Of Birth",
                 accessor: "dateOfBirth",
                 Cell: ({ value }) => new Date(value).toLocaleDateString('vi-VN'),
             },
-            { Header: "Giới tính", accessor: "gender" },
+            { Header: "Gender", accessor: "gender" },
             {
-                Header: "Địa chỉ", accessor: "address",
+                Header: "Address", accessor: "address",
                 Cell: ({ value }) => (
                     <span className="single-line-cell">{value}</span>
                 )
@@ -154,15 +154,15 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
                         "N/A"
                     ),
             },
-            { Header: "CMND/CCCD", accessor: "nationalID" },
+            { Header: "National ID", accessor: "nationalID" },
             {
-                Header: "Phòng ban", accessor: "departmentName",
+                Header: "Department", accessor: "departmentName",
                 Cell: ({ value }) => (
                     <span className="single-line-cell">{value}</span>
                 )
             },
             {
-                Header: "Trạng thái",
+                Header: "Status",
                 accessor: "status",
                 Cell: ({ value }) => (
                     <div style={{
@@ -177,7 +177,7 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
                 ),
             },
             {
-                Header: "Ngày tạo",
+                Header: "Created",
                 accessor: "createdAt",
                 Cell: ({ value }) => {
                     const date = new Date(value);
@@ -238,7 +238,7 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
                     <div className="Header-Search">
                         <input
                             type="text"
-                            placeholder="Tìm kiếm theo tên , email"
+                            placeholder="Search by name, email"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"

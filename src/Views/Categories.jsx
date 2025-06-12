@@ -22,8 +22,8 @@ const Categories = () => {
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn đúng 1 Category để cập nhật.',
+                title: 'Warning!',
+                text: 'Please select the correct Category to update.',
             });
         }
     };
@@ -31,14 +31,14 @@ const Categories = () => {
     const handleDeleteClick = async () => {
         if (selectedCategoryIds.length > 0) {
             const result = await Swal.fire({
-                title: 'Xác nhận xoá',
-                text: `Bạn có chắc chắn muốn xoá ${selectedCategoryIds.length} Category?`,
+                title: 'Confirm Deleted',
+                text: `Are you sure you want to delete ${selectedCategoryIds.length} Category?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Vâng, xoá!',
-                cancelButtonText: 'Huỷ',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
             });
 
             if (result.isConfirmed) {
@@ -50,24 +50,24 @@ const Categories = () => {
                     );
                     setReloadFlag(prev => !prev);
                     Swal.fire(
-                        'Đã xoá!',
-                        'Các Categories đã được xoá thành công.',
+                        'Deleted!',
+                        'Categories deleted successfully.',
                         'success'
                     );
                 } catch (err) {
                     console.error('Lỗi khi xoá Categories:', deleteError || err);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Lỗi!',
-                        text: 'Đã xảy ra lỗi khi xoá các Categories.',
+                        title: 'Error!',
+                        text: 'An error occurred while deleting Categories.',
                     });
                 }
             }
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn ít nhất một Category để xoá.',
+                title: 'Warning!',
+                text: 'Please select the correct Category to update.',
             });
         }
     };

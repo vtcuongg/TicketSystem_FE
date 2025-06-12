@@ -112,7 +112,6 @@ const Chat = () => {
             refetchChatData();
             refetchChatDataDetail()
         } catch (error) {
-            console.error("Failed to send message:", error);
         }
     };
     const formatDate = (timestamp) => {
@@ -141,16 +140,16 @@ const Chat = () => {
         const pastVN = new Date(past.getTime() + 7 * 60 * 60 * 1000);
         const diffInSeconds = Math.floor((now - pastVN) / 1000);
         if (diffInSeconds < 60) {
-            return `${diffInSeconds} giây trước`;
+            return `${diffInSeconds} last second`;
         } else if (diffInSeconds < 3600) {
             const diffInMinutes = Math.floor(diffInSeconds / 60);
-            return `${diffInMinutes} phút trước`;
+            return `${diffInMinutes} last minute`;
         } else if (diffInSeconds < 86400) {
             const diffInHours = Math.floor(diffInSeconds / 3600);
-            return `${diffInHours} giờ trước`;
+            return `${diffInHours}last hour`;
         } else {
             const diffInDays = Math.floor(diffInSeconds / 86400);
-            return `${diffInDays} ngày trước`;
+            return `${diffInDays} last day`;
         }
     };
     if (chatData && userData) {
@@ -163,7 +162,7 @@ const Chat = () => {
                         <div className={`chat-search-bar ${isSearch ? 'active' : ''}`} onClick={handleSearchInputClick}>
                             {isSearch && (<FaArrowLeft className="Back-icon" onClick={handleSearchBackClick} />)}
                             <FaSearch className="search-icon" />
-                            <input type="text" placeholder="Tìm kiếm trên Messenger"
+                            <input type="text" placeholder="Search in messages"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -195,7 +194,7 @@ const Chat = () => {
                                             </div>
                                         ))
                                 ) : (
-                                    <div className="no-result">Không tìm thấy kết quả</div>
+                                    <div className="no-result">No results found</div>
                                 )}
                             </div>
                         ) : (
@@ -230,7 +229,7 @@ const Chat = () => {
                                 ) :
                                     (
                                         <div className="empty-chat-message">
-                                            Không tìm thấy cuộc trò chuyện nào
+                                            No conversations found
                                         </div>
                                     )
                                 }
@@ -248,7 +247,7 @@ const Chat = () => {
                                     <div className={`online-status-icon ${currentChatUser.isOnline ? 'online' : ''}`}></div>
                                     <div className="user-details">
                                         <div className="user-name">{currentChatUser.fullName}</div>
-                                        <div className="online-status">{currentChatUser.isOnline ? 'Đang hoạt động' : 'Không hoạt động'}</div>
+                                        <div className="online-status">{currentChatUser.isOnline ? 'Online' : 'Offline'}</div>
                                     </div>
                                 </div>
                             </div>

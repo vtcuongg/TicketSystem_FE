@@ -21,8 +21,8 @@ const ChangePass = () => {
         if (isPasswordChangeSuccess) {
             Swal.fire({
                 icon: 'success',
-                title: 'Đổi mật khẩu thành công!',
-                text: 'Mật khẩu của bạn đã được cập nhật.',
+                title: 'Password changed successfully!!',
+                text: 'Your password has been updated.',
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
@@ -34,12 +34,12 @@ const ChangePass = () => {
         }
         if (isPasswordChangeError) {
             console.error("Error changing password:", passwordChangeError);
-            const errorMessage = passwordChangeError?.data?.Message || 'Đã có lỗi xảy ra khi đổi mật khẩu.';
+            const errorMessage = passwordChangeError?.data?.Message || 'An error occurred while changing password.';
             const errors = passwordChangeError?.data?.Errors ? passwordChangeError.data.Errors.join('\n') : '';
 
             Swal.fire({
                 icon: 'error',
-                title: 'Lỗi đổi mật khẩu!',
+                title: 'Password change error!',
                 text: `${errorMessage}\n${errors}`,
             });
         }
@@ -49,18 +49,18 @@ const ChangePass = () => {
         e.preventDefault();
 
         if (!currentPassword || !newPassword || !confirmPassword) {
-            Swal.fire('Lỗi!', 'Vui lòng điền đầy đủ các trường mật khẩu.', 'error');
+            Swal.fire('Error!', 'Please fill in all password fields.', 'error');
             return;
         }
         if (newPassword !== confirmPassword) {
-            Swal.fire('Lỗi!', 'Mật khẩu mới và xác nhận mật khẩu không khớp.', 'error');
+            Swal.fire('Error!', 'New password and confirm password do not match.', 'error');
             return;
         }
 
         try {
             const userId = id;
             if (isNaN(userId)) {
-                Swal.fire('Lỗi!', 'ID người dùng không hợp lệ.', 'error');
+                Swal.fire('Error!', 'Invalid user ID.', 'error');
                 return;
             }
             await changeUserPassword({
@@ -80,7 +80,7 @@ const ChangePass = () => {
                 <div className="changepass-detail-container">
                     <form onSubmit={handleChangePasswordSubmit}>
                         <div className="form-group-change">
-                            <label htmlFor="currentPass">Mật khẩu hiện tại</label>
+                            <label htmlFor="currentPass">Current Pass</label>
                             <input
                                 type="password"
                                 id="currentPass"
@@ -91,7 +91,7 @@ const ChangePass = () => {
                             />
                         </div>
                         <div className="form-group-change">
-                            <label htmlFor="newPass">Mật khẩu mới</label>
+                            <label htmlFor="newPass">New Password</label>
                             <input
                                 type="password"
                                 id="newPass"
@@ -102,7 +102,7 @@ const ChangePass = () => {
                             />
                         </div>
                         <div className="form-group-change">
-                            <label htmlFor="confirmPass">Xác nhận mật khẩu mới</label>
+                            <label htmlFor="confirmPass">Confirm new Password</label>
                             <input
                                 type="password"
                                 id="confirmPass"
@@ -112,9 +112,9 @@ const ChangePass = () => {
                                 disabled={isPasswordChanging}
                             />
                         </div>
-                        <div style={{ color: "red" }}>Mật khẩu có ít nhất 6 kí tự bao gồm 1 chữ hoa và 1 kí tự đặc biệt</div>
+                        <div style={{ color: "red" }}>Password must be at least 6 characters long, including 1 uppercase letter and 1 special character</div>
                         <button type="submit" className="submit-button-changepass" disabled={isPasswordChanging}>
-                            {isPasswordChanging ? 'Đang đổi mật khẩu...' : 'Đổi mật khẩu'}
+                            {isPasswordChanging ? 'Changing Password' : 'Changed Password'}
                         </button>
                     </form>
                 </div>

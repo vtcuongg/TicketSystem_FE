@@ -66,14 +66,14 @@ const CreateUser = () => {
                 if (result.error) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Chú ý!',
-                        text: "Nhập thông tin sai , hay kiểm tra lại "
+                        title: 'Warning!',
+                        text: "Enter incorrect information, please check again"
                     });
                 }
                 else {
                     Swal.fire(
-                        'Đã tạo mới thành công !',
-                        'User đã được tạo thành công.',
+                        'New created successfully!',
+                        'User created successfully',
                         'success'
                     );
                     navigate('/users');
@@ -98,21 +98,20 @@ const CreateUser = () => {
                 if (result.error) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Chú ý!',
-                        text: "Nhập thông tin sai , hay kiểm tra lại "
+                        title: 'Warning!',
+                        text: "Entered incorrect information, please check again"
                     });
                 }
                 else {
                     Swal.fire(
-                        'Đã cập nhật thành công !',
-                        'User đã được tạo thành công.',
+                        'Updated successfully!',
+                        'User Updated successfully',
                         'success'
                     );
                     navigate('/users');
                 }
             }
         } catch (err) {
-            console.error('Lỗi không mong muốn:', err);
         }
     };
     useEffect(() => {
@@ -142,7 +141,7 @@ const CreateUser = () => {
             <div className="create-user-container">
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="UserName">Họ và tên </label>
+                        <label htmlFor="UserName">Name </label>
                         <input
                             type="text"
                             id="UserName"
@@ -178,17 +177,17 @@ const CreateUser = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="phone">SDT</label>
+                        <label htmlFor="phone">Phone</label>
                         <input
                             type="text"
                             id="phone"
-                            placeholder="SDT:Có 10 số bắt đầu bằng số 0 "
+                            placeholder="Phone number: There are 10 numbers starting with 0"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="dayofbirth">Ngày sinh</label>
+                        <label htmlFor="dayofbirth">Date Of Birth</label>
                         <input
                             type="date"
                             id="dayofbirth"
@@ -198,7 +197,7 @@ const CreateUser = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="Gender">Giới tính</label>
+                        <label htmlFor="Gender">Gender</label>
                         <input
                             type="text"
                             id="Gender"
@@ -209,7 +208,7 @@ const CreateUser = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="address">Địa chỉ</label>
+                        <label htmlFor="address">Address</label>
                         <input
                             type="text"
                             id="address"
@@ -220,7 +219,7 @@ const CreateUser = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="CCCD">CMND/CCCD</label>
+                        <label htmlFor="CCCD">National ID</label>
                         <input
                             type="text"
                             id="CCCD"
@@ -263,7 +262,7 @@ const CreateUser = () => {
                         </select>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="Status">Trạng thái</label>
+                        <label htmlFor="Status">Status</label>
                         <select
                             id="Status"
                             value={status}

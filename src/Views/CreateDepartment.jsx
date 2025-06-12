@@ -30,8 +30,8 @@ const CreateDepartment = () => {
             if (!isUpdate) {
                 await addDepartment({ departmentName: departmentName });
                 Swal.fire(
-                    'Đã tạo mới thành công !',
-                    'Department đã được tạo thành công.',
+                    'Newly created successfully!',
+                    'Department created successfully ',
                     'success'
                 );
                 navigate('/department')
@@ -39,14 +39,13 @@ const CreateDepartment = () => {
             else {
                 await updateDepartment({ departmentID: departmentID, departmentName: departmentName });
                 Swal.fire(
-                    'Đã update thành công !',
-                    'Department đã được update thành công.',
+                    'Updated successfully!',
+                    'Department Updated successfully',
                     'success'
                 );
                 navigate('/department')
             }
         } catch (err) {
-            console.error('Lỗi khi thêm phòng ban:', error || err);
         }
 
 
@@ -68,7 +67,7 @@ const CreateDepartment = () => {
                 <form onSubmit={handleSubmit}>
                     {location.pathname.includes("/update-department") &&
                         <div className="form-group">
-                            <label htmlFor="departmenID">Mã phòng ban</label>
+                            <label htmlFor="departmenID">Department ID</label>
                             <input
                                 type="text"
                                 id="departmentID"
@@ -82,7 +81,7 @@ const CreateDepartment = () => {
                     }
 
                     <div className="form-group">
-                        <label htmlFor="departmentName">Tên phòng ban</label>
+                        <label htmlFor="departmentName">Department Name</label>
                         <input
                             type="text"
                             id="departmentName"

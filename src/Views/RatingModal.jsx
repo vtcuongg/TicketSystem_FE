@@ -53,8 +53,8 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
         if (rating === 0) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Bạn chưa đánh giá mức độ hài lòng',
+                title: 'Warning!',
+                text: 'You have not rated your satisfaction level yet.',
             });
         }
         onSubmit({ rating, comment });
@@ -63,7 +63,7 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
         return (
             <div className="rating-modal-overlay">
                 <div className="rating-modal" ref={modalRef} >
-                    <h2>Đánh giá của bạn</h2>
+                    <h2>Your review</h2>
                     <div className="stars-container">
                         {[...Array(5)].map((_, index) => {
                             const currentRating = index + 1;
@@ -89,7 +89,7 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
                         })}
                     </div>
                     <textarea
-                        placeholder="Nhập nội dung đánh giá của bạn (không bắt buộc)"
+                        placeholder="Enter your review (optional)"
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         rows="4"
@@ -98,8 +98,8 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
                     />
                     {!isFeedBack &&
                         <div className="modal-actions">
-                            <button onClick={onClose} className="cancel-btn">Hủy</button>
-                            <button onClick={handleSubmit} className="submit-btn">Xác nhận</button>
+                            <button onClick={onClose} className="cancel-btn">Cancel</button>
+                            <button onClick={handleSubmit} className="submit-btn">Confirm</button>
                         </div>
                     }
 

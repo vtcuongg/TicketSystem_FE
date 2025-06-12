@@ -36,8 +36,8 @@ const CreateCategory = () => {
             if (!isUpdate) {
                 await addCategory({ departmentID: department, categoryName: CategoryName });
                 Swal.fire(
-                    'Đã tạo mới thành công !',
-                    'Category đã được tạo thành công.',
+                    'New created successfully!',
+                    'Category created successfully',
                     'success'
                 );
                 navigate('/Categories')
@@ -45,14 +45,13 @@ const CreateCategory = () => {
             else {
                 await updateCategory({ categoryID: categoryId, categoryName: CategoryName, departmentID: department });
                 Swal.fire(
-                    'Đã update thành công !',
-                    'Category đã được update thành công.',
+                    'Updated successfully!',
+                    'Category updated successfully',
                     'success'
                 );
                 navigate('/Categories')
             }
         } catch (err) {
-            console.error("Failed to add category:", err);
         }
 
     };
@@ -74,7 +73,7 @@ const CreateCategory = () => {
                         {isUpdate &&
                             <div className="form-group">
 
-                                <label htmlFor="categoryId">Mã đề mục </label>
+                                <label htmlFor="categoryId">Category ID</label>
                                 <input
                                     type="text"
                                     id="categoryId"
@@ -87,7 +86,7 @@ const CreateCategory = () => {
                             </div>
                         }
                         <div className="form-group">
-                            <label htmlFor="CategoryName">Tên đề mục</label>
+                            <label htmlFor="CategoryName">Category Name</label>
                             <input
                                 type="text"
                                 id="CategoryName"

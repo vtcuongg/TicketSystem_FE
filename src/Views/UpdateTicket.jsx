@@ -201,16 +201,13 @@ const UpdateTicket = () => {
             }
 
             Swal.fire(
-                'Thành công!',
-                'Ticket đã được cập nhật thành công.',
+                'Success!',
+                'Ticket Updated Successfully',
                 'success'
             );
             navigate('/my-ticket')
         } catch (err) {
-            console.error("Chi tiết lỗi:", err);
-            if (err.data) {
-                console.error("Lỗi chi tiết:", err.data.errors || err.data);
-            }
+
         }
 
     };
@@ -280,7 +277,7 @@ const UpdateTicket = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="CreatedBy">CreatedBy</label>
+                            <label htmlFor="CreatedBy">Author</label>
                             <input
                                 type="text"
                                 id="CreatedBy"
@@ -290,7 +287,7 @@ const UpdateTicket = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="assignTo">Assign To</label>
+                            <label htmlFor="assignTo">Assignee</label>
                             <Select
                                 id="assignTo"
                                 value={formData?.assingTo}
@@ -380,7 +377,7 @@ const UpdateTicket = () => {
                             </select>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="CreatedAt">CreatedAt</label>
+                            <label htmlFor="CreatedAt">Created</label>
                             <input
                                 type="date"
                                 id="CreatedAt"
@@ -391,7 +388,7 @@ const UpdateTicket = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="UpdateAt">UpdateAt</label>
+                            <label htmlFor="UpdateAt">Updated</label>
                             <input
                                 type="date"
                                 id="UpdateAt"
@@ -402,7 +399,7 @@ const UpdateTicket = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="DueDate">DueDate</label>
+                            <label htmlFor="DueDate">Due Date</label>
                             <input
                                 type="date"
                                 id="DueDate"

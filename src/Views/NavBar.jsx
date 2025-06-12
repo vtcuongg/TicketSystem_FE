@@ -176,10 +176,11 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsChatListOpen(false)
         refetchChatData()
     };
-    const handleChatItemClick1 = (userId, messageId) => {
+    const handleChatItemClick1 = async (userId, messageId) => {
         setActiveChatId(userId);
-        markMessageAsRead(messageId);
+        await markMessageAsRead(messageId);
         refetchChatData()
+        refetchChatDataDetail()
         setIsChatDetailOpen(true);
         setIsChatListOpen(false)
     };
@@ -209,16 +210,16 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         const pastVN = new Date(past.getTime() + 7 * 60 * 60 * 1000);
         const diffInSeconds = Math.floor((now - pastVN) / 1000);
         if (diffInSeconds < 60) {
-            return `${diffInSeconds} giây trước`;
+            return `${diffInSeconds} last second`;
         } else if (diffInSeconds < 3600) {
             const diffInMinutes = Math.floor(diffInSeconds / 60);
-            return `${diffInMinutes} phút trước`;
+            return `${diffInMinutes} last minute`;
         } else if (diffInSeconds < 86400) {
             const diffInHours = Math.floor(diffInSeconds / 3600);
-            return `${diffInHours} giờ trước`;
+            return `${diffInHours}last hour`;
         } else {
             const diffInDays = Math.floor(diffInSeconds / 86400);
-            return `${diffInDays} ngày trước`;
+            return `${diffInDays} last day`;
         }
     };
     const { data: userData, isLoading: isLoadingUserData, error: errorUserData } = useGetAllUsersQuery();
@@ -288,6 +289,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsCustomerOpen(false)
         setIsTicketOpen(false)
         refetchChatData()
+        refetchChatDataDetail()
     };
     const toggleCustomertMenu = () => {
         setIsCustomerOpen(!isCustomerOpen);
@@ -337,7 +339,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                 <div className={`chat-search-bar ${isSearch ? 'active' : ''}`} onClick={handleSearchInputClick}>
                                                     {isSearch && (<FaArrowLeft className="Back-icon" onClick={handleSearchBackClick} />)}
                                                     <FaSearch className="search-icon" />
-                                                    <input type="text" placeholder="Tìm kiếm trên Messenger"
+                                                    <input type="text" placeholder="Search in messages"
                                                         value={searchTerm}
                                                         onChange={(e) => setSearchTerm(e.target.value)} />
                                                 </div>
@@ -368,7 +370,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                                     </div>
                                                                 ))
                                                         ) : (
-                                                            <div className="no-result">Không tìm thấy kết quả</div>
+                                                            <div className="no-result">No results found</div>
                                                         )}
                                                     </div>
                                                 ) : (
@@ -400,7 +402,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                         ) :
                                                             (
                                                                 <div className="empty-chat-message">
-                                                                    Không tìm thấy cuộc trò chuyện nào
+                                                                    No conversations found
                                                                 </div>
                                                             )
                                                         }
@@ -415,7 +417,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                     <FaBell />
                                     {isNotificationOpen && (
                                         <div className="notification-dropdown" onClick={(e) => e.stopPropagation()}>
-                                            <h3>Thông báo</h3>
+                                            <h3>Notifications</h3>
                                             <div className="notification-list">
                                                 {NotificaitonData?.data.length > 0 ? (
                                                     NotificaitonData.data.map((notification) => (
@@ -431,7 +433,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                     ))
                                                 ) : (
                                                     !isLoadingNotificaitonData && !errorNotificaitonData && (
-                                                        <p style={{ fontSize: "18px", color: "#999" }}>Không có thông báo mới.</p>
+                                                        <p style={{ fontSize: "18px", color: "#999" }}>No new notifications.</p>
                                                     )
                                                 )}
                                             </div>

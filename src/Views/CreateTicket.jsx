@@ -102,13 +102,12 @@ const CreateTicket = ({ onLogout }) => {
         try {
             await createTicket(formDataToSend).unwrap();
             Swal.fire(
-                'Thành công!',
-                'Ticket đã được tạo thành công.',
+                'Success!',
+                'Ticket Newly created successfully',
                 'success'
             );
             navigate('/my-ticket')
         } catch (err) {
-            console.error('Lỗi khi tạo ticket:', err);
         }
     };
     const handleRemoveAttachment = (index) => {

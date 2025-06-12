@@ -97,19 +97,19 @@ const CategoryTable = ({ onRowSelect, reloadFlag }) => {
             {
                 Header: () => (
                     <div>
-                        Mã đề mục
+                        Category ID
                     </div >
                 ), accessor: "categoryID",
             },
             {
-                Header: "Tên đề mục", accessor: "categoryName",
+                Header: "Category Name", accessor: "categoryName",
                 Cell: ({ value }) => (
                     <span className="single-line-cell">{value}</span>
                 ),
                 width: 1000
             },
             {
-                Header: "Thuộc phòng ban ", accessor: "departmentName",
+                Header: "Department", accessor: "departmentName",
                 Cell: ({ value }) => (
                     <span className="single-line-cell">{value}</span>
                 ),
@@ -168,7 +168,7 @@ const CategoryTable = ({ onRowSelect, reloadFlag }) => {
                     <div className="search-input-container">
                         <input
                             type="text"
-                            placeholder="Tìm kiếm theo tên phân loại"
+                            placeholder="Search by name of category"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"

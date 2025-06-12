@@ -51,11 +51,11 @@ const Profile = () => {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         const maxSize = 5 * 1024 * 1024;
         if (!allowedTypes.includes(file.type)) {
-            Swal.fire('Lỗi', 'Chỉ chấp nhận file ảnh (JPEG, PNG, GIF).', 'error');
+            Swal.fire('Error', 'Only image files (JPEG, PNG, GIF) are accepted.', 'error');
             return;
         }
         if (file.size > maxSize) {
-            Swal.fire('Lỗi', 'Kích thước file quá lớn (tối đa 5MB).', 'error');
+            Swal.fire('Error', 'File size too large (maximum 5MB).', 'error');
             return;
         }
         try {
@@ -83,7 +83,7 @@ const Profile = () => {
                             style={{ cursor: 'pointer' }}
                             disabled={isAvatarUpdating}
                         />
-                        {isAvatarUpdating && <p className="avatar-upload-loading">Đang tải ảnh lên...</p>}
+                        {isAvatarUpdating && <p className="avatar-upload-loading">Upload...</p>}
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -101,13 +101,13 @@ const Profile = () => {
                                 onClick={() => navigate(`/change-pass/${id}`)}
                                 className="submit-button"
                             >
-                                Đổi mật khẩu
+                                Change Password
                             </button>
                         </div>
                     </div>
                     <div className="profile-detail-container">
                         <div className="form-group">
-                            <label htmlFor="phone">SDT</label>
+                            <label htmlFor="phone">Phone</label>
                             <input
                                 type="text"
                                 id="phone"
@@ -116,7 +116,7 @@ const Profile = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="dayofbirth">Ngày sinh</label>
+                            <label htmlFor="dayofbirth">Date Of Birth</label>
                             <input
                                 type="text"
                                 id="dayofbirth"
@@ -125,7 +125,7 @@ const Profile = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="Gender">Giới tính</label>
+                            <label htmlFor="Gender">Gender</label>
                             <input
                                 type="text"
                                 id="Gender"
@@ -134,7 +134,7 @@ const Profile = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="address">Địa chỉ</label>
+                            <label htmlFor="address">Address</label>
                             <input
                                 type="text"
                                 id="address"
@@ -143,7 +143,7 @@ const Profile = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="CCCD">CMND/CCCD</label>
+                            <label htmlFor="CCCD">National ID</label>
                             <input
                                 type="text"
                                 id="CCCD"
@@ -161,7 +161,7 @@ const Profile = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="Status">Trạng thái</label>
+                            <label htmlFor="Status">Status</label>
                             <select
                                 id="Status"
                                 value={status}

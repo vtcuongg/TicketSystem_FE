@@ -86,12 +86,12 @@ const DepartmentTable = ({ onRowSelect, reloadFlag }) => {
             {
                 Header: () => (
                     <div>
-                        Mã Phòng Ban
+                        Department ID
                     </div >
                 ), accessor: "departmentID",
             },
             {
-                Header: "Tên phòng ban", accessor: "departmentName",
+                Header: "Department Name", accessor: "departmentName",
                 Cell: ({ value }) => (
                     <span className="single-line-cell">{value}</span>
                 ),
@@ -148,7 +148,7 @@ const DepartmentTable = ({ onRowSelect, reloadFlag }) => {
                 <div className="Header-Search">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo tên phòng ban"
+                        placeholder="Search by name department"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="search-input"

@@ -127,7 +127,7 @@ const RatingTable = () => {
                 <div className="Header-Search">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo tên"
+                        placeholder="Search by Name"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="search-input"

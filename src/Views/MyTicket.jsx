@@ -24,8 +24,8 @@ const MyTicket = () => {
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn đúng 1 ticket để cập nhật.',
+                title: 'Warning!',
+                text: 'Please select a Ticket to update.',
             });
         }
     };
@@ -33,14 +33,14 @@ const MyTicket = () => {
     const handleDeleteClick = async () => {
         if (selectedTicketIds.length > 0) {
             const result = await Swal.fire({
-                title: 'Xác nhận xoá',
-                text: `Bạn có chắc chắn muốn xoá ${selectedTicketIds.length} Tickets?`,
+                title: 'Confirm Deleted',
+                text: `Are you sure you want to delete ${selectedTicketIds.length} Tickets?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Vâng, xoá!',
-                cancelButtonText: 'Huỷ',
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No',
             });
 
             if (result.isConfirmed) {
@@ -50,16 +50,16 @@ const MyTicket = () => {
                 setReloadFlag(prev => !prev);
                 setSelectedTicketIds([]);
                 Swal.fire(
-                    'Đã xoá!',
-                    'Các Ticket đã được xoá thành công.',
+                    'Deleted!',
+                    'Tickets Deleted Successfully ',
                     'success'
                 );
             }
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn ít nhất một Ticket để xoá.',
+                title: 'Warning!',
+                text: 'Please select a Ticket to delete',
             });
         }
     };

@@ -19,8 +19,8 @@ const Users = () => {
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn đúng 1 Users để cập nhật.',
+                title: 'Warning!',
+                text: 'Please select the correct 1 User to update',
             });
         }
     };
@@ -28,14 +28,14 @@ const Users = () => {
     const handleDeleteClick = async () => {
         if (selectedUserIds.length > 0) {
             const result = await Swal.fire({
-                title: 'Xác nhận xoá',
-                text: `Bạn có chắc chắn muốn xoá ${selectedUserIds.length} User ?`,
+                title: 'Confirm Deleted',
+                text: `Are you sure you want to delete ${selectedUserIds.length} User ?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Vâng, xoá!',
-                cancelButtonText: 'Huỷ',
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No',
             });
 
             if (result.isConfirmed) {
@@ -47,24 +47,23 @@ const Users = () => {
                     );
                     setReloadFlag(prev => !prev);
                     Swal.fire(
-                        'Đã xoá!',
-                        'Các Users đã được xoá thành công.',
+                        'Deleted',
+                        'The Users have been successfully deleted.',
                         'success'
                     );
                 } catch (err) {
-                    console.error('Lỗi khi xoá Users:', deleteError || err);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Lỗi!',
-                        text: 'Đã xảy ra lỗi khi xoá các Users.',
+                        title: 'Error!',
+                        text: 'An error occurred while deleting Users.',
                     });
                 }
             }
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn ít nhất một Users để xoá.',
+                title: 'Warning!',
+                text: 'Please select at least one User to delete.',
             });
         }
     };

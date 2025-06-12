@@ -139,10 +139,10 @@ const Report = () => {
                         {hasEmployeeData ? (
                             <div>
                                 <ReactApexChart className="ReactApexChart" options={chartEmployeeOptions} series={series_employee} type="donut" height={240} />
-                                <p >Tổng số Employee: {dataEmployee?.totalUsers}</p>
+                                <p >Total Employees: {dataEmployee?.totalUsers}</p>
                             </div>
                         ) : (
-                            <div className="no-data-message">Chưa có dữ liệu</div>
+                            <div className="no-data-message">No data yet</div>
                         )}
                     </div>
                     <div className="main-top-ticket">
@@ -169,10 +169,10 @@ const Report = () => {
                                 <ReactApexChart
                                     key={JSON.stringify(chartSeries)}
                                     className="ReactApexChart" options={chartOptions} series={chartSeries} type="donut" height={240} />
-                                <p >Tổng số tickets: {ticketData?.totalTicket}</p>
+                                <p >Total tickets: {ticketData?.totalTicket}</p>
                             </div>
                         ) : (
-                            <div className="no-data-message">Chưa có dữ liệu</div>
+                            <div className="no-data-message">No data yet</div>
                         )}
 
                     </div>

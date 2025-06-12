@@ -21,8 +21,8 @@ const Department = () => {
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn đúng 1 Department để cập nhật.',
+                title: 'Warning!',
+                text: 'Please select a department to update.',
             });
         }
     };
@@ -30,14 +30,14 @@ const Department = () => {
     const handleDeleteClick = async () => {
         if (selectedDepartmentIds.length > 0) {
             const result = await Swal.fire({
-                title: 'Xác nhận xoá',
-                text: `Bạn có chắc chắn muốn xoá ${selectedDepartmentIds.length} Department?`,
+                title: 'Confirm Deleted',
+                text: `Are you sure you want to delete ${selectedDepartmentIds.length} Department?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Vâng, xoá!',
-                cancelButtonText: 'Huỷ',
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No',
             });
 
             if (result.isConfirmed) {
@@ -49,24 +49,23 @@ const Department = () => {
                     );
                     setReloadFlag(prev => !prev);
                     Swal.fire(
-                        'Đã xoá!',
-                        'Các department đã được xoá thành công.',
+                        'Deleted!',
+                        'Departmens Deleted Successfully',
                         'success'
                     );
                 } catch (err) {
-                    console.error('Lỗi khi xoá department:', deleteError || err);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Lỗi!',
-                        text: 'Đã xảy ra lỗi khi xoá các department.',
+                        title: 'Error!',
+                        text: 'An error occurred while deleting departments.',
                     });
                 }
             }
         } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Chú ý!',
-                text: 'Vui lòng chọn ít nhất một Department để xoá.',
+                title: 'Warning!',
+                text: 'Please select a department to update.',
             });
         }
     };

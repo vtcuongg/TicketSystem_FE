@@ -88,8 +88,8 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
             }
             Swal.fire({
                 icon: 'success',
-                title: 'Thành công !',
-                text: 'Cảm ơn bạn đã dành thời gian để đánh giá',
+                title: 'Success!',
+                text: 'Thank you for taking the time to review.',
             });
         } catch (err) {
         }
@@ -218,7 +218,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     },
                 },
                 {
-                    Header: "Assign To",
+                    Header: "Assignee",
                     accessor: "assignedUsers",
                     Cell: ({ value }) => {
                         if (!Array.isArray(value) || value.length === 0) {
@@ -228,7 +228,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                                 whiteSpace: 'nowrap',
                                 flex: 1,
                             }}>
-                                Chưa được phân công</span>;
+                                Not assigned yet</span>;
                         }
                         return (
                             <div>
@@ -258,7 +258,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     },
                 },
                 {
-                    Header: "CreatedBy",
+                    Header: "Author",
                     accessor: "createdByName",
                     Cell: ({ row }) => {
                         const createdByAvatar = row.original.createdByAvatar;
@@ -288,7 +288,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     },
                 },
                 {
-                    Header: "CreatedAt",
+                    Header: "Created ",
                     accessor: "createdAt",
                     Cell: ({ value }) => {
                         if (value) {
@@ -302,7 +302,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     },
                 },
                 {
-                    Header: "DueDate",
+                    Header: "Due Date",
                     accessor: "dueDate",
                     Cell: ({ value }) => {
                         if (value) {
@@ -320,7 +320,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                 return [
                     ...baseColumns,
                     {
-                        Header: "Actions",
+                        Header: "Feed Back",
                         Cell: ({ row }) => (
                             <div className='action-icons'>
                                 <button className='feedback-btn'>
@@ -389,7 +389,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                 <div className="Header-Search">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm TicketID, CreatedBy, AssignTo"
+                        placeholder="Search by Ticket ID, Created, Assignee"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="search-input"
