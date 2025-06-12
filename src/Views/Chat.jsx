@@ -5,6 +5,8 @@ import { FaSearch, FaPaperclip, FaArrowLeft } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
 import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation, useSendMessageMutation } from "../Services/chatApi";
 import { useGetAllUsersQuery } from "../Services/userApi";
+import * as signalR from "@microsoft/signalr";
+
 const Chat = () => {
     const [activeChatId, setActiveChatId] = useState(null);
     const messageContainerRef = useRef(null);
@@ -15,6 +17,8 @@ const Chat = () => {
     const [markMessageAsRead] = useMarkMessageAsReadMutation();
     const [sendMessage] = useSendMessageMutation();
     const [messageText, setMessageText] = useState("");
+    const [token, setToken] = useState("");
+    const newConnection = useRef(null);
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
@@ -23,7 +27,7 @@ const Chat = () => {
             try {
                 const decodedToken = jwtDecode(token);
                 const currentTime = Date.now() / 1000;
-
+                setToken(token)
                 if (decodedToken.exp > currentTime) {
                     setUser(JSON.parse(storedUser));
                 } else {
@@ -35,6 +39,23 @@ const Chat = () => {
                 localStorage.removeItem('user');
             }
         }
+
+        newConnection.current = new signalR.HubConnectionBuilder()
+            .withUrl("https://vietcuong-001-site1.jtempurl.com/chathub", {
+                accessTokenFactory: () => token,
+            })
+            .withAutomaticReconnect()
+            .build();
+        newConnection.current.on("NewMessageSignal", (messageContent) => {
+            refetchChatData()
+            refetchChatDataDetail()
+        });
+        newConnection.current.start()
+        return () => {
+            newConnection.current.stop();
+        };
+
+
     }, []);
     const handleSearchInputClick = () => {
         setIsSearch(true)
@@ -85,7 +106,7 @@ const Chat = () => {
                 content: messageText,
                 attachments: selectedFiles
             }).unwrap();
-
+            await newConnection.current.invoke("SendMessage", messageText);
             setMessageText("");
             setSelectedFiles([]);
             refetchChatData();
@@ -119,7 +140,6 @@ const Chat = () => {
         const past = new Date(dateTimeString);
         const pastVN = new Date(past.getTime() + 7 * 60 * 60 * 1000);
         const diffInSeconds = Math.floor((now - pastVN) / 1000);
-        console.log(now, pastVN)
         if (diffInSeconds < 60) {
             return `${diffInSeconds} giây trước`;
         } else if (diffInSeconds < 3600) {
@@ -134,6 +154,7 @@ const Chat = () => {
         }
     };
     if (chatData && userData) {
+        console.log(chatData)
         return (
             <NavBar title="Chat" showHeaderLink={false}>
                 <div className="main-container">
@@ -181,6 +202,7 @@ const Chat = () => {
                             <div className="chat-list">
 
                                 {chatData?.length > 0 ? (
+
                                     chatData?.map(chat => (
                                         <div
                                             className={`chat-item ${activeChatId === chat.userID ? 'active' : ''}`}
@@ -191,6 +213,7 @@ const Chat = () => {
                                                 {chat.avatar ? <img src={chat.avatar} alt={chat.fullName} /> : <span>{chat.fullName.charAt(0)}</span>}
                                             </div>
                                             <div className={`online-status ${chat.isOnline ? 'online' : ''}`}></div>
+
                                             <div className={"message-info"}>
                                                 <div className={`user-name ${activeChatId === chat.userID ? 'active' : ''}`}>{chat.fullName}</div>
                                                 <div className={`last-message ${!chat.isRead ? 'unread' : ''}`}>

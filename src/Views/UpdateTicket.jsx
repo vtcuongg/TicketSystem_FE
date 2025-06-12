@@ -187,7 +187,6 @@ const UpdateTicket = () => {
                         return `Ticket #${ticketID} đã được cập nhật.`;
                 }
             };
-            console.log(status)
             for (const receiverID of receiverIDs) {
                 const message = getNotificationMessage(formData.Status, formData.ticketID, receiverID, assignedUserIds, formData.createdBy);
                 const notificationPayload = {

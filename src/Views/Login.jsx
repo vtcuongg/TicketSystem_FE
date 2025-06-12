@@ -50,11 +50,12 @@ const Login = ({ setConnection }) => {
                 .withAutomaticReconnect()
                 .build();
             newConnection.on("UserOnline", (user) => {
+                console.log("kkkkkk")
             });
 
             newConnection.on("UserOffline", (user) => {
+                console.log("offfofff")
             });
-
             await newConnection.start();
             setConnection(newConnection);
             navigate('/create-ticket');

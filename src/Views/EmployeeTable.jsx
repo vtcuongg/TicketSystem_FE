@@ -64,13 +64,13 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
     } = user?.roleName === "Admin" ? getAllUsersQuery : getUsersByDepartmentQuery;
     useEffect(() => {
         if (refetch && typeof refetch === "function") {
-            refetch().then(res => console.log("Refetch result:", res));
+            refetch()
         }
     }, [location.pathname, refetch]);
 
     useEffect(() => {
         if (refetch && typeof refetch === "function") {
-            refetch().then(res => console.log("Refetch result:", res));
+            refetch()
         }
     }, [reloadFlag, refetch]);
     const filteredData = React.useMemo(() => {

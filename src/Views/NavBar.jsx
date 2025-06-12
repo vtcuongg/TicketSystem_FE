@@ -12,13 +12,14 @@ import {
     FaUsers
 } from 'react-icons/fa';
 import { useGetAllUsersQuery } from "../Services/userApi";
-import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useSendMessageMutation } from "../Services/chatApi";
+import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useSendMessageMutation, useMarkMessageAsReadMutation } from "../Services/chatApi";
 import { useGetNotificationByIdQuery } from "../Services/NotificationApi"
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../Stores/authSlice';
+import * as signalR from "@microsoft/signalr";
 const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isTicketOpen, setIsTicketOpen] = useState(false);
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
@@ -41,6 +42,8 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [messageText, setMessageText] = useState("");
+    const newConnection = useRef(null);
+    const [markMessageAsRead] = useMarkMessageAsReadMutation();
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -63,6 +66,20 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                 localStorage.removeItem('user');
             }
         }
+        newConnection.current = new signalR.HubConnectionBuilder()
+            .withUrl("https://vietcuong-001-site1.jtempurl.com/chathub", {
+                accessTokenFactory: () => token,
+            })
+            .withAutomaticReconnect()
+            .build();
+        newConnection.current.on("NewMessageSignal", (messageContent) => {
+            refetchChatData()
+            refetchChatDataDetail()
+        });
+        newConnection.current.start()
+        return () => {
+            newConnection.current.stop();
+        };
     }, []);
 
     const navigate = useNavigate();
@@ -81,7 +98,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                 content: messageText,
                 attachments: selectedFiles
             }).unwrap();
-
+            await newConnection.current.invoke("SendMessage", messageText);
             setMessageText("");
             setSelectedFiles([]);
             refetchChatData();
@@ -157,6 +174,14 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setActiveChatId(userId);
         setIsChatDetailOpen(true);
         setIsChatListOpen(false)
+        refetchChatData()
+    };
+    const handleChatItemClick1 = (userId, messageId) => {
+        setActiveChatId(userId);
+        markMessageAsRead(messageId);
+        refetchChatData()
+        setIsChatDetailOpen(true);
+        setIsChatListOpen(false)
     };
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -183,7 +208,6 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         const past = new Date(dateTimeString);
         const pastVN = new Date(past.getTime() + 7 * 60 * 60 * 1000);
         const diffInSeconds = Math.floor((now - pastVN) / 1000);
-        console.log(now, pastVN)
         if (diffInSeconds < 60) {
             return `${diffInSeconds} giây trước`;
         } else if (diffInSeconds < 3600) {
@@ -303,7 +327,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                     <FaCog />
                                 </div>
                                 {title != "Chat" && (
-                                    <div className="icon-wrapper with-dot" onClick={toggleChatListOpen}>
+                                    <div className={`icon-wrapper ${chatData.some(chat => !chat.isRead) ? 'with-dot' : ''}`} onClick={toggleChatListOpen}>
                                         <FaCommentDots />
                                         {isChatListOpen && (
                                             <div className='chat-list-container' onClick={(e) => {
@@ -354,7 +378,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                                 <div
                                                                     className={`chat-item ${activeChatId === chat.userID ? 'active' : ''}`}
                                                                     key={chat.userID}
-                                                                    onClick={() => handleChatItemClick(chat.userID)}
+                                                                    onClick={() => handleChatItemClick1(chat.userID, chat.lastMessageId)}
                                                                 >
                                                                     <div className="avatar">
                                                                         {chat.avatar ? <img src={chat.avatar} alt={chat.fullName} /> : <span>{chat.fullName.charAt(0)}</span>}
@@ -473,6 +497,15 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                 Categories
                                             </a>
                                         </li>
+                                        <li className="sidebar-item" onClick={toggleChat}>
+                                            <Link to="/chat" className={`sidebar-link ${isChatOpen ? "Click" : ""}`}
+                                                onMouseEnter={handleMouseEnter}
+                                                onMouseLeave={handleMouseLeave}>
+                                                <FaFacebookMessenger className="sidebar-icon" />
+                                                Message
+                                                {chatData.some(chat => !chat.isRead) && <span className="badge">New</span>}
+                                            </Link>
+                                        </li>
                                     </div>
                                     :
                                     <div>
@@ -481,7 +514,6 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                             onMouseLeave={() => handleMouseLeave("TK")}>
                                             <FaTicketAlt className="sidebar-icon" onHover />
                                             Ticket
-                                            <span className="badge">New</span>
                                             {isTicketOpen ? (
                                                 <FaCaretDown className="sidebar-arrow" />
                                             ) : (
