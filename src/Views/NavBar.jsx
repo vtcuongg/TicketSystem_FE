@@ -438,9 +438,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    !isLoadingNotificaitonData && !errorNotificaitonData && (
-                                                        <p style={{ fontSize: "18px", color: "#999" }}>No new notifications.</p>
-                                                    )
+                                                    <p style={{ fontSize: "18px", color: "#999" }}>No new notifications.</p>
                                                 )}
                                             </div>
                                         </div>
@@ -511,7 +509,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                 onMouseLeave={handleMouseLeave}>
                                                 <FaFacebookMessenger className="sidebar-icon" />
                                                 Message
-                                                {chatData.some(chat => !chat.isRead) && <span className="badge">New</span>}
+                                                {Array.isArray(chatData) && chatData.length > 0 && chatData.some(chat => !chat.isRead) && <span className="badge">New</span>}
                                             </Link>
                                         </li>
                                     </div>
@@ -634,7 +632,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                                 onMouseLeave={handleMouseLeave}>
                                                 <FaFacebookMessenger className="sidebar-icon" />
                                                 Message
-                                                <span className="badge">New</span>
+                                                {Array.isArray(chatData) && chatData.length > 0 && chatData.some(chat => !chat.isRead) && <span className="badge">New</span>}
                                             </Link>
                                         </li>
 

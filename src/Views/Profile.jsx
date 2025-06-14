@@ -77,13 +77,15 @@ const Profile = () => {
             <NavBar title="Profile" path="App">
                 <div className="main-container-profile">
                     <div className="profile-info-section">
-                        <img src={User?.data.avatar} alt={User?.data.userName} className="profile-picture" />
-                        <FaCamera
-                            className="camera-icon"
-                            onClick={triggerFileInput}
-                            style={{ cursor: 'pointer' }}
-                            disabled={isAvatarUpdating}
-                        />
+                        <div className="picture-container">
+                            <img src={User?.data.avatar} alt={User?.data.userName} className="profile-picture" />
+                            <FaCamera
+                                className="camera-icon"
+                                onClick={triggerFileInput}
+                                style={{ cursor: 'pointer' }}
+                                disabled={isAvatarUpdating}
+                            />
+                        </div>
                         {isAvatarUpdating && <p className="avatar-upload-loading">Upload...</p>}
                         <input
                             type="file"

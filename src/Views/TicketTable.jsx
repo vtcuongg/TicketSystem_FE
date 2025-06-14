@@ -98,7 +98,9 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
     const location = useLocation();
     const { data, isLoading, error, refetch } = useGetTicketsQuery({
         ...(location.pathname === "/my-ticket" && { createdBy: user?.id }),
-        ...(location.pathname === "/my-work" && user?.roleName === "Manager" && { assignto: user?.id, departmentId: user?.departmentID }),
+        ...(location.pathname === "/my-work" && (user?.roleName === "Manager"
+            ? { departmentId: user?.departmentID }
+            : { assignto: user?.id })),
     },
         {
             skip: !user?.id,

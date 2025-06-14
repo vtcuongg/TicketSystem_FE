@@ -18,27 +18,27 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { setUser } from './Stores/authSlice';
 import NavBar from './Views/NavBar';
 import { MdWysiwyg } from 'react-icons/md';
 import { useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { setUser } from './Stores/authSlice';
 function App() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const connection = useRef(null);
+  const dispatch = useDispatch();
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const storedUser = localStorage.getItem('user');
-
     if (token && storedUser) {
       try {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000;
-
         if (decodedToken.exp > currentTime) {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
           setIsAdmin(JSON.parse(storedUser).roleName === 'Admin');
+          dispatch(setUser(parsedUser));
         } else {
           localStorage.removeItem('authToken');
           localStorage.removeItem('user');
@@ -63,17 +63,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/Login" element={<Login setConnection={(conn) => (connection.current = conn)} />} />
         <Route
           path="/"
           element={
-            user ? (
-              isAdmin ? <Users /> : <CreateTicket />
+            localStorage.getItem('user') ? (
+              isAdmin ? <Users /> : <MyTicket />
             ) : (
               <Navigate to="/login" replace />
             )
           }
         />
+        <Route path="/Login" element={<Login setConnection={(conn) => (connection.current = conn)} />} />
         <Route path="/create-ticket" element={<CreateTicket />} />
         <Route path="/update-ticket/:id" element={<UpdateTicket />} />
         <Route path="/report" element={<Report />} />

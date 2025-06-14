@@ -235,7 +235,7 @@ const CreateUser = () => {
                             id="Department"
                             value={department}
                             onChange={(e) => setDepartment(e.target.value)}
-                            required
+                            required={UserName !== "Admin"}
                         >
                             <option value="">Select a Department</option>
                             {DepartmentOptions?.data.map((option) => (

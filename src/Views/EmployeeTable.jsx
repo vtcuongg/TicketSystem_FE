@@ -29,7 +29,7 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
     )
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(8);
     const [currentPage, setCurrentPage] = useState(0);
     const [user, setUser] = useState(null);
     const location = useLocation();
@@ -229,7 +229,6 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
                     <div className="show-entries">
                         <span>Show</span>
                         <select value={pageSize} onChange={handlePageSizeChange}>
-                            <option value={5}>5</option>
                             <option value={8}>8</option>
                             <option value={10}>10</option>
                             <option value={15}>15</option>

@@ -11,21 +11,16 @@
     justify-content: center;
     z-index: 1;
     margin-bottom: 20px;
-    
+    .picture-container{
+        position: relative;
     .camera-icon{
         color: #36e9c8;
         position: absolute;
         top:80%;
         font-size: 25px;
-        right: 58%;
+        right: 20%;
     }
-    .profile-banner {
-    width: 100%;
-    object-fit: cover;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-.profile-picture {
+    .profile-picture {
     width: 150px; 
     height: 150px;
     border-radius: 50%;
@@ -33,7 +28,15 @@
     object-fit: cover;
     margin-right: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    }
+    .profile-banner {
+    width: 100%;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
+
 
 .profile-details {
     display: flex;
