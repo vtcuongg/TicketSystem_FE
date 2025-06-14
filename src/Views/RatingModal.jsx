@@ -4,6 +4,7 @@ import { FaStar } from 'react-icons/fa';
 import '../Styles/RatingModal.scss';
 import { useGetFeedbackByTicketIdQuery } from '../Services/feedBackApi';
 import Swal from 'sweetalert2';
+import Loading from './Loading';
 
 const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
     const [rating, setRating] = useState(0);
@@ -106,6 +107,11 @@ const RatingModal = ({ isOpen, onClose, onSubmit, ticketId }) => {
                 </div>
             </div>
         );
+    }
+    else {
+        return (
+            <Loading />
+        )
     }
 };
 

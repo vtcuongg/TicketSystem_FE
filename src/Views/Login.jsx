@@ -13,6 +13,8 @@ const Login = ({ setConnection }) => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [signIn, { isLoading, error }] = useSignInMutation();
     const checkTokenExpiry = () => {
         const token = localStorage.getItem('authToken');
@@ -26,6 +28,31 @@ const Login = ({ setConnection }) => {
             return true;
         }
     };
+    const validateInputs = () => {
+        let valid = true;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        setEmailError('');
+        setPasswordError('');
+
+        if (!email) {
+            setEmailError("Email is required");
+            valid = false;
+        } else if (!emailRegex.test(email)) {
+            setEmailError("	Invalid email address");
+            valid = false;
+        }
+
+        if (!password) {
+            setPasswordError("Password is required");
+            valid = false;
+        } else if (password.length < 6) {
+            setPasswordError("Password must be at least 6 characters");
+            valid = false;
+        }
+
+        return valid;
+    };
     const handleLogout = () => {
         localStorage.removeItem('authToken');
         navigate('/login');
@@ -37,6 +64,7 @@ const Login = ({ setConnection }) => {
         }
     }, []);
     const handleSignIn = async () => {
+        if (!validateInputs()) return;
         try {
             const result = await signIn({ email, password }).unwrap();
             localStorage.setItem('authToken', result.token);
@@ -50,17 +78,14 @@ const Login = ({ setConnection }) => {
                 .withAutomaticReconnect()
                 .build();
             newConnection.on("UserOnline", (user) => {
-                console.log("kkkkkk")
             });
 
             newConnection.on("UserOffline", (user) => {
-                console.log("offfofff")
             });
             await newConnection.start();
             setConnection(newConnection);
             navigate('/create-ticket');
         } catch (err) {
-            console.error("SignalR connection failed:", err);
         }
     };
     return (
@@ -85,9 +110,12 @@ const Login = ({ setConnection }) => {
                 <button className="sign-in-button" onClick={handleSignIn} disabled={isLoading}>
                     {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
-                {error && (
+                {(emailError || passwordError || error) && (
                     <p style={{ color: 'red' }}>
-                        {error.data?.message || "Login failed"}
+                        {emailError ||
+                            passwordError ||
+                            error?.data?.message ||
+                            "Login failed"}
                     </p>
                 )}
             </div>

@@ -1,5 +1,5 @@
 import NavBar from "./NavBar";
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import "../Styles/UpdateTicket.scss"
 import { Editor } from '@tinymce/tinymce-react';
 import avatar from "../assets/Images/avatar-df.png"
@@ -15,6 +15,8 @@ import { useLocation } from 'react-router-dom';
 import { useAssignUsersToTicketMutation } from '../Services/ticketAssignmentApi';
 import { jwtDecode } from 'jwt-decode';
 import { useCreateNotificationMutation } from "../Services/NotificationApi"
+import * as signalR from "@microsoft/signalr";
+import Loading from "./Loading";
 
 const UpdateTicket = () => {
     const location = useLocation();
@@ -35,6 +37,7 @@ const UpdateTicket = () => {
     const [assignTo, setAssignTo] = useState([]);
     const [formData, setFormData] = useState(null);
     const [user, setUser] = useState(null);
+    const newConnection = useRef(null);
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
@@ -55,6 +58,16 @@ const UpdateTicket = () => {
                 localStorage.removeItem('user');
             }
         }
+        newConnection.current = new signalR.HubConnectionBuilder()
+            .withUrl("https://vietcuong-001-site1.jtempurl.com/chathub", {
+                accessTokenFactory: () => token,
+            })
+            .withAutomaticReconnect()
+            .build();
+        newConnection.current.start()
+        return () => {
+            newConnection.current.stop();
+        };
     }, []);
     const { data: dataTicket, isLoading: isLoadingTicket, error: errorTicket, refetch } = useGetTicketsQuery({ TicketId: id });
     useEffect(() => {
@@ -124,7 +137,6 @@ const UpdateTicket = () => {
         { value: '3', label: 'Chờ xác nhận' },
         { value: '4', label: 'Hoàn thành' },
         { value: '5', label: 'Đã hủy' },
-        { value: '6', label: 'Cháy Deadline' },
     ], []);
 
     useEffect(() => {
@@ -156,16 +168,17 @@ const UpdateTicket = () => {
         try {
             await updateTicket(submitData).unwrap();
             const assignedUserIds = formData.assingTo.map(user => user.value);
-            const assignPayload = {
-                ticketID: formData.ticketID,
-                assignedToList: assignedUserIds
-            };
-            await assignToUser(assignPayload).unwrap();
-
+            if (assignedUserIds.length > 0) {
+                const assignPayload = {
+                    ticketID: formData.ticketID,
+                    assignedToList: assignedUserIds
+                };
+                await assignToUser(assignPayload).unwrap();
+            }
             const senderID = user?.id
             const receiverIDs = [formData.createdBy, ...assignedUserIds];
             const now = new Date().toISOString();
-            const getNotificationMessage = (status, ticketID, receiverID, assignedUserIds, createdBy) => {
+            const getNotificationMessage = (status, ticketID, receiverID, assignedUserIds, createdBy, DueDate) => {
                 if (status === 'Đang xử lý') {
                     if (receiverID === createdBy) {
                         return `Ticket #${ticketID} đang được xử lý.`;
@@ -181,14 +194,12 @@ const UpdateTicket = () => {
                         return `Ticket #${ticketID} đã được hoàn thành.`;
                     case 'Đã hủy':
                         return `Ticket #${ticketID} đã bị hủy.`;
-                    case 'Cháy Deadline':
-                        return `Ticket #${ticketID} đã cháy deadline!`;
                     default:
                         return `Ticket #${ticketID} đã được cập nhật.`;
                 }
             };
             for (const receiverID of receiverIDs) {
-                const message = getNotificationMessage(formData.Status, formData.ticketID, receiverID, assignedUserIds, formData.createdBy);
+                const message = getNotificationMessage(formData.Status, formData.ticketID, receiverID, assignedUserIds, formData.createdBy, formData.DueDate);
                 const notificationPayload = {
                     senderID: senderID,
                     receiverID: receiverID,
@@ -198,6 +209,7 @@ const UpdateTicket = () => {
                     createdAt: now,
                 };
                 await createNotification(notificationPayload).unwrap();
+                await newConnection.current.invoke("SendNotification");
             }
 
             Swal.fire(
@@ -293,12 +305,16 @@ const UpdateTicket = () => {
                                 value={formData?.assingTo}
                                 onChange={handleAssigntToChange}
                                 isMulti
-                                options={Users?.data.users.map(user => ({
-                                    value: user.id,
-                                    label: user.userName,
-                                    avatar: user.avatar,
-                                    userName: user.userName
-                                }))}
+                                options={
+                                    Users?.data.users
+                                        .filter(u => u.departmentID === user.departmentID)
+                                        .map(u => ({
+                                            value: u.id,
+                                            label: u.userName,
+                                            avatar: u.avatar,
+                                            userName: u.userName
+                                        }))
+                                }
                                 getOptionLabel={(option) => option.label}
                                 getOptionValue={(option) => option.value}
                                 components={{ Option: OptionComponent, MultiValueLabel: MultiValueComponent }}
@@ -478,6 +494,11 @@ const UpdateTicket = () => {
                     </form>
                 </div>
             </NavBar>
+        )
+    }
+    else {
+        return (
+            < Loading />
         )
     }
 }

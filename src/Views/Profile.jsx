@@ -8,6 +8,7 @@ import avatar from "../assets/Images/avatar-df.png"
 import { useAddUserMutation, useUpdateAvatarMutation, useGetUsersByIdQuery, useUpdateUserStatusMutation } from '../Services/userApi';
 import { useParams } from 'react-router-dom';
 import { FaCamera } from 'react-icons/fa';
+import Loading from "./Loading";
 const Profile = () => {
     const navigate = useNavigate()
     const location = useLocation();
@@ -182,6 +183,11 @@ const Profile = () => {
                 </div>
             </NavBar>
         )
+    }
+    else {
+        return (
+            <Loading />
+        );
     }
 }
 export default Profile;

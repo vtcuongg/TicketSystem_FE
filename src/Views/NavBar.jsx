@@ -20,6 +20,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../Stores/authSlice';
 import * as signalR from "@microsoft/signalr";
+import Loading from './Loading';
 const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isTicketOpen, setIsTicketOpen] = useState(false);
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
@@ -43,6 +44,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [messageText, setMessageText] = useState("");
     const newConnection = useRef(null);
+    const [isNewNoti, setIsNewNoti] = useState(false)
     const [markMessageAsRead] = useMarkMessageAsReadMutation();
 
     useEffect(() => {
@@ -76,6 +78,10 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
             refetchChatData()
             refetchChatDataDetail()
         });
+        newConnection.current.on("NewNotificationSignal", () => {
+            refetchNotification()
+            setIsNewNoti(true)
+        });
         newConnection.current.start()
         return () => {
             newConnection.current.stop();
@@ -104,7 +110,6 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
             refetchChatData();
             refetchChatDataDetail()
         } catch (error) {
-            console.error("Failed to send message:", error);
         }
     }
     useEffect(() => {
@@ -133,6 +138,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         setIsChatListOpen(false);
         setIsDropdownAvatarOpen(false);
         refetchNotification()
+        setIsNewNoti(false)
     };
     const toggleDapartment = () => {
         setIsDepartmentOpen(!isDepartmentOpen);
@@ -413,7 +419,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                                     </div>
                                 )}
 
-                                <div className="icon-wrapper with-dot" onClick={toggleNotificationOpen}>
+                                <div className={`icon-wrapper ${isNewNoti ? 'with-dot' : ''}`} onClick={toggleNotificationOpen}>
                                     <FaBell />
                                     {isNotificationOpen && (
                                         <div className="notification-dropdown" onClick={(e) => e.stopPropagation()}>
@@ -762,7 +768,9 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         );
     }
     else {
-        return <div>Đang tải...</div>;
+        return (
+            <Loading />
+        );
     }
 }
 

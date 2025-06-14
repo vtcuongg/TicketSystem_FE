@@ -98,7 +98,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
     const location = useLocation();
     const { data, isLoading, error, refetch } = useGetTicketsQuery({
         ...(location.pathname === "/my-ticket" && { createdBy: user?.id }),
-        ...(location.pathname === "/my-work" && { assignto: user?.id }),
+        ...(location.pathname === "/my-work" && user?.roleName === "Manager" && { assignto: user?.id, departmentId: user?.departmentID }),
     },
         {
             skip: !user?.id,
@@ -215,6 +215,26 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     accessor: "status",
                     Cell: ({ value }) => {
                         return <span className="status">{value}</span>;
+                    },
+                },
+                {
+                    Header: "Warning",
+                    id: "warning",
+                    Cell: ({ row }) => {
+                        const value = row.original.dueDate;
+
+                        if (value) {
+                            const dueDate = new Date(value);
+                            const today = new Date();
+                            dueDate.setHours(0, 0, 0, 0);
+                            today.setHours(0, 0, 0, 0);
+
+                            if (dueDate < today) {
+                                return <span className="status" style={{ color: 'red' }}>🔥 Deadline</span>;
+                            }
+                        }
+
+                        return <span className="status" style={{ color: 'gray' }}>N/A</span>;
                     },
                 },
                 {
@@ -341,8 +361,6 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
         },
         [location.pathname, handleOpenRatingModal]
     );
-
-
     const tableInstance = useTable({
         columns, data: currentPageData,
         getRowId: (row) => row.ticketID,

@@ -8,6 +8,7 @@ import { useGetUsersByDepartmentQuery } from "../Services/userApi";
 import { useGetTicketsQuery } from '../Services/ticketApi';
 import { useGetAllUsersQuery } from "../Services/userApi";
 import { useLocation } from 'react-router-dom';
+import Loading from "./Loading";
 const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
 
     const IndeterminateCheckbox = React.forwardRef(
@@ -311,6 +312,11 @@ const EmployeeTable = ({ onRowSelect, reloadFlag }) => {
                 )}
             </div>
         );
+    }
+    else {
+        return (
+            <Loading />
+        )
     }
 
 };

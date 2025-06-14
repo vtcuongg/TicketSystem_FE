@@ -7,6 +7,7 @@ import { useAddCategoryMutation, useUpdateCategoryMutation, useGetCategoryByIdQu
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useLocation } from 'react-router-dom';
+import Loading from "./Loading";
 
 const CreateCategory = () => {
     const { id } = useParams();
@@ -118,6 +119,11 @@ const CreateCategory = () => {
                     </form>
                 </div>
             </NavBar>
+        )
+    }
+    else {
+        return (
+            <Loading />
         )
     }
 }

@@ -8,6 +8,7 @@ import { useGetCategoriesByDepartmentQuery } from '../Services/categoryApi';
 import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import Loading from "./Loading";
 const CreateTicket = ({ onLogout }) => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -254,6 +255,11 @@ const CreateTicket = ({ onLogout }) => {
                     </form>
                 </div>
             </NavBar>
+        )
+    }
+    else {
+        return (
+            <Loading />
         )
     }
 }

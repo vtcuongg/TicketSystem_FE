@@ -55,7 +55,6 @@ const Categories = () => {
                         'success'
                     );
                 } catch (err) {
-                    console.error('Lỗi khi xoá Categories:', deleteError || err);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',

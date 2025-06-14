@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useGetUserMessagesQuery, useGetMessagesBetweenUsersQuery, useMarkMessageAsReadMutation, useSendMessageMutation } from "../Services/chatApi";
 import { useGetAllUsersQuery } from "../Services/userApi";
 import * as signalR from "@microsoft/signalr";
+import Loading from "./Loading";
 
 const Chat = () => {
     const [activeChatId, setActiveChatId] = useState(null);
@@ -153,7 +154,6 @@ const Chat = () => {
         }
     };
     if (chatData && userData) {
-        console.log(chatData)
         return (
             <NavBar title="Chat" showHeaderLink={false}>
                 <div className="main-container">
@@ -334,6 +334,11 @@ const Chat = () => {
                     </div>
                 </div>
             </NavBar >
+        )
+    }
+    else {
+        return (
+            <Loading />
         )
     }
 }
