@@ -122,7 +122,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         else if (title == "Employee List") {
             setIsCustomerOpen(true)
         }
-        else if (title == "Create Ticket" || title == "All Ticket") {
+        else if (title == "Create Ticket" || title == "My Ticket" || title == "My Work") {
             setIsTicketOpen(true)
         }
     }, [title])

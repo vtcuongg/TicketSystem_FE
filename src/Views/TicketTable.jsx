@@ -224,18 +224,19 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                     id: "warning",
                     Cell: ({ row }) => {
                         const value = row.original.dueDate;
+                        const status = row.original.status
+                        if (status !== 'Hoàn thành') {
+                            if (value) {
+                                const dueDate = new Date(value);
+                                const today = new Date();
+                                dueDate.setHours(0, 0, 0, 0);
+                                today.setHours(0, 0, 0, 0);
 
-                        if (value) {
-                            const dueDate = new Date(value);
-                            const today = new Date();
-                            dueDate.setHours(0, 0, 0, 0);
-                            today.setHours(0, 0, 0, 0);
-
-                            if (dueDate < today) {
-                                return <span className="status" style={{ color: 'red' }}>🔥 Deadline</span>;
+                                if (dueDate < today) {
+                                    return <span className="status" style={{ color: 'red' }}>🔥 Deadline</span>;
+                                }
                             }
                         }
-
                         return <span className="status" style={{ color: 'gray' }}>N/A</span>;
                     },
                 },
@@ -409,7 +410,7 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                 <div className="Header-Search">
                     <input
                         type="text"
-                        placeholder="Search by Ticket ID, Created, Assignee"
+                        placeholder="Search by Ticket ID, Author, Assignee"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="search-input"

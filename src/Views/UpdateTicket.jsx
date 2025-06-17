@@ -24,7 +24,7 @@ const UpdateTicket = () => {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [ticketId, setTicketId] = useState('');
-    const [status, setStatus] = useState('');
+    const [status_init, setStatus] = useState('');
     const [createdBy, setCreatedBy] = useState('');
     const [CreatedAt, setCreatedAt] = useState('');
     const [UpdateAt, setUpdateAt] = useState('');
@@ -73,6 +73,9 @@ const UpdateTicket = () => {
     useEffect(() => {
         refetch()
     }, [location.pathname]);
+    useEffect(() => {
+        setStatus(dataTicket?.[0]?.status)
+    }, [dataTicket]);
     useEffect(() => {
         setFormData({
             ticketID: dataTicket?.[0]?.ticketID,
@@ -179,23 +182,34 @@ const UpdateTicket = () => {
             const receiverIDs = [formData.createdBy, ...assignedUserIds];
             const now = new Date().toISOString();
             const getNotificationMessage = (status, ticketID, receiverID, assignedUserIds, createdBy, DueDate) => {
+                const dueDate = new Date(DueDate);
+                const today = new Date();
+                dueDate.setHours(0, 0, 0, 0);
+                today.setHours(0, 0, 0, 0);
+                if (status_init === status) {
+                    return `Ticket #${ticketID} vừa được cập nhật.`;
+                }
+                if (status !== 'Hoàn thành') {
+                    if (dueDate < today) {
+                        return `Ticket #${ticketID} 🔥 Deadline`;
+                    }
+                }
                 if (status === 'Đang xử lý') {
                     if (receiverID === createdBy) {
                         return `Ticket #${ticketID} đang được xử lý.`;
                     }
-                    if (assignedUserIds.includes(receiverID)) {
-                        return `Ticket #${ticketID} đã được giao đến cho bạn.`;
-                    }
                 }
                 switch (status) {
                     case 'Chờ xác nhận':
-                        return `Ticket #${ticketID} đang chờ xác nhận nhận.`;
+                        return `Ticket #${ticketID} đang chờ xác nhận.`;
                     case 'Hoàn thành':
                         return `Ticket #${ticketID} đã được hoàn thành.`;
                     case 'Đã hủy':
                         return `Ticket #${ticketID} đã bị hủy.`;
-                    default:
-                        return `Ticket #${ticketID} đã được cập nhật.`;
+                    case 'Mới':
+                        if (assignedUserIds.includes(receiverID)) {
+                            return `Ticket #${ticketID} đã được giao đến cho bạn.`;
+                        }
                 }
             };
             for (const receiverID of receiverIDs) {
@@ -294,7 +308,7 @@ const UpdateTicket = () => {
                                 type="text"
                                 id="CreatedBy"
                                 placeholder="CreatedBy"
-                                value={formData?.createdBy}
+                                value={dataTicket?.[0]?.createdByName}
                                 readOnly
                             />
                         </div>
@@ -422,7 +436,7 @@ const UpdateTicket = () => {
                                 name="DueDate"
                                 value={formData?.DueDate}
                                 onChange={handleChange}
-
+                                readOnly={user?.roleName !== "Manager"}
                             />
                         </div>
                         <div className="form-group">

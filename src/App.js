@@ -50,7 +50,26 @@ function App() {
     }
 
     setLoading(false);
-  }, []);
+  }, [!!localStorage.getItem('user')]);
+
+  const useLocalStorageUser = () => {
+    const [user, setUser] = useState(() => {
+      const raw = localStorage.getItem('user');
+      return raw ? JSON.parse(raw) : null;
+    });
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        const stored = localStorage.getItem('user');
+        setUser(stored ? JSON.parse(stored) : null);
+      }, 1000);
+      return () => clearInterval(interval);
+    }, []);
+
+    return user;
+  };
+  const user = useLocalStorageUser();
+
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (connection.current) {
@@ -66,7 +85,7 @@ function App() {
         <Route
           path="/"
           element={
-            localStorage.getItem('user') ? (
+            user ? (
               isAdmin ? <Users /> : <MyTicket />
             ) : (
               <Navigate to="/login" replace />
@@ -74,24 +93,25 @@ function App() {
           }
         />
         <Route path="/Login" element={<Login setConnection={(conn) => (connection.current = conn)} />} />
-        <Route path="/create-ticket" element={<CreateTicket />} />
-        <Route path="/update-ticket/:id" element={<UpdateTicket />} />
-        <Route path="/report" element={<Report />} />
-        <Route path="/employee" element={<Employee />} />
-        <Route path="/my-work" element={<MyTicket />} />
-        <Route path="/my-ticket" element={<MyTicket />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/create-user" element={<CreateUser />} />
-        <Route path="/update-user/:id" element={<CreateUser />} />
-        <Route path="/department" element={<Department />} />
-        <Route path="/create-department" element={<CreateDepartment />} />
-        <Route path="/update-department/:id" element={<CreateDepartment />} />
-        <Route path="/Categories" element={<Categories />} />
-        <Route path="/create-category" element={<CreateCategory />} />
-        <Route path="/update-category/:id" element={<CreateCategory />} />
-        <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/change-pass/:id" element={<ChangePass />} />
+        <Route path="/create-ticket" element={user ? <CreateTicket /> : <Navigate to="/login" replace />} />
+        <Route path="/update-ticket/:id" element={user ? <UpdateTicket /> : <Navigate to="/login" replace />} />
+        <Route path="/report" element={user ? <Report /> : <Navigate to="/login" replace />} />
+        <Route path="/employee" element={user ? <Employee /> : <Navigate to="/login" replace />} />
+        <Route path="/my-work" element={user ? <MyTicket /> : <Navigate to="/login" replace />} />
+        <Route path="/my-ticket" element={user ? <MyTicket /> : <Navigate to="/login" replace />} />
+        <Route path="/chat" element={user ? <Chat /> : <Navigate to="/login" replace />} />
+        <Route path="/users" element={isAdmin ? <Users /> : <Navigate to="/login" replace />} />
+        <Route path="/create-user" element={isAdmin ? <CreateUser /> : <Navigate to="/login" replace />} />
+        <Route path="/update-user/:id" element={isAdmin ? <CreateUser /> : <Navigate to="/login" replace />} />
+        <Route path="/department" element={isAdmin ? <Department /> : <Navigate to="/login" replace />} />
+        <Route path="/create-department" element={isAdmin ? <CreateDepartment /> : <Navigate to="/login" replace />} />
+        <Route path="/update-department/:id" element={isAdmin ? <CreateDepartment /> : <Navigate to="/login" replace />} />
+        <Route path="/categories" element={isAdmin ? <Categories /> : <Navigate to="/login" replace />} />
+        <Route path="/create-category" element={isAdmin ? <CreateCategory /> : <Navigate to="/login" replace />} />
+        <Route path="/update-category/:id" element={isAdmin ? <CreateCategory /> : <Navigate to="/login" replace />} />
+        <Route path="/profile/:id" element={user ? <Profile /> : <Navigate to="/login" replace />} />
+        <Route path="/change-pass/:id" element={user ? <ChangePass /> : <Navigate to="/login" replace />} />
+
       </Routes>
 
     </Router>

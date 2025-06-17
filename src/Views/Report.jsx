@@ -6,10 +6,12 @@ import RatingTable from "./RatingTable";
 import { jwtDecode } from 'jwt-decode';
 import { useGetSummaryUserByDepartmentQuery, useGetSummaryTicketQuery } from '../Services/reportApi';
 import { FaChartPie } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 
 const Report = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const location = useLocation();
     const today = new Date();
     useEffect(() => {
         const today = new Date();
@@ -48,13 +50,17 @@ const Report = () => {
             }
         }
     }, []);
-    const { data: dataEmployee, isLoading, error } = useGetSummaryUserByDepartmentQuery(user?.departmentID);
-    const { data: ticketData, isLoading: isLoadingdataTicket, error: errordataTicket } = useGetSummaryTicketQuery({
+    const { data: dataEmployee, isLoading, error, refetch: refetchdataEmployee } = useGetSummaryUserByDepartmentQuery(user?.departmentID);
+    const { data: ticketData, isLoading: isLoadingdataTicket, error: errordataTicket, refetch: refetchticketData } = useGetSummaryTicketQuery({
         startDate: startDate,
         endDate: endDate,
         departmentId: user?.departmentID,
     });
 
+    useEffect(() => {
+        refetchdataEmployee()
+        refetchticketData()
+    }, [location.pathname, user?.departmentID, startDate, endDate]);
     const statusColorMap = {
         "Mới": "#FFA500",
         "Đang xử lý": "#008000",

@@ -64,11 +64,14 @@ const MyTicket = () => {
         }
     };
     return (
-        <NavBar title="All Ticket" path="Ticket">
+        <NavBar
+            title={location.pathname === "/my-work" ? "My Work" : "My Ticket"}
+            path="Ticket"
+        >
             <div className="main-container-ticket">
                 <div className="header-main">
                     <div className="header-main-left">
-                        All Ticket
+                        {location.pathname === "/my-work" ? "My Work" : "My Ticket"}
                     </div>
                     <div className="header-main-right">
                         {location.pathname === "/my-work" ?
