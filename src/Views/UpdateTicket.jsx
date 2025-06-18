@@ -164,8 +164,10 @@ const UpdateTicket = () => {
         submitData.append("createdAt", formData.createdAt);
         submitData.append("updatedAt", formData.UpdateAt);
         submitData.append("dueDate", formData.DueDate);
-        attachments.forEach((file, index) => {
-            submitData.append(`attachments`, file);
+        attachments.forEach(file => {
+            if (file instanceof File) {
+                submitData.append("attachments", file);
+            }
         });
 
         try {
@@ -231,7 +233,7 @@ const UpdateTicket = () => {
                 'Ticket Updated Successfully',
                 'success'
             );
-            navigate('/my-work')
+            navigate('/my-ticket')
         } catch (err) {
 
         }
