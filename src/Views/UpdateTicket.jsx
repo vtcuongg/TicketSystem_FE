@@ -165,11 +165,8 @@ const UpdateTicket = () => {
         submitData.append("updatedAt", formData.UpdateAt);
         submitData.append("dueDate", formData.DueDate);
         attachments.forEach(file => {
-            if (file instanceof File) {
-                submitData.append("attachments", file);
-            }
+            submitData.append("attachments", file);
         });
-
         try {
             await updateTicket(submitData).unwrap();
             const assignedUserIds = formData.assingTo.map(user => user.value);
@@ -465,10 +462,10 @@ const UpdateTicket = () => {
                                         'alignright alignjustify | bullist numlist outdent indent | ' +
                                         'removeformat | help',
                                     content_style: `
-                                    body { 
-                                      font-family: Helvetica, Arial, sans-serif; 
-                                      font-size: 14px; 
-                                      color: white; 
+                                    body {
+                                      font-family: Helvetica, Arial, sans-serif;
+                                      font-size: 14px;
+                                      color: white;
                                     }
                                   `,
                                     statusbar: false,
@@ -489,6 +486,7 @@ const UpdateTicket = () => {
                                 <div className="file-drop-area">
                                     Drop files here to upload
                                 </div>
+
                                 {attachments?.length > 0 && (
                                     <div className="attachments-preview">
                                         <div className="attachments-list">
