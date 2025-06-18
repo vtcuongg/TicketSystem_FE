@@ -405,6 +405,7 @@ const UpdateTicket = () => {
                                         {option.label}
                                     </option>
                                 ))}
+
                             </select>
                         </div>
                         <div className="form-group">
