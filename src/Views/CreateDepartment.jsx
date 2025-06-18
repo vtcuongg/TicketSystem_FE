@@ -22,7 +22,9 @@ const CreateDepartment = () => {
             skip: !id
         });
     useEffect(() => {
-        refetch()
+        if (department) {
+            refetch()
+        }
     }, location)
     const handleSubmit = async (event) => {
         event.preventDefault();

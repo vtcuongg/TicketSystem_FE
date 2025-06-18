@@ -231,7 +231,7 @@ const UpdateTicket = () => {
                 'Ticket Updated Successfully',
                 'success'
             );
-            navigate('/my-ticket')
+            navigate('/my-work')
         } catch (err) {
 
         }
@@ -490,7 +490,9 @@ const UpdateTicket = () => {
                                         <div className="attachments-list">
                                             {Array.from(attachments).map((file, index) => (
                                                 <div key={file.fileName ? file.fileName : file.name} className="attachment-item">
-                                                    <span>{file.fileName ? file.fileName : file.name}</span>
+                                                    <span> <a style={{ color: 'white', textDecoration: 'none' }} href={file.url} target="_blank" rel="noopener noreferrer">
+                                                        {file.fileName || file.name}
+                                                    </a></span>
                                                     <button type="button" className="remove-attachment" onClick={() => handleRemoveAttachment(index)}>
                                                         X
                                                     </button>
@@ -506,8 +508,8 @@ const UpdateTicket = () => {
                             Submit
                         </button>
                     </form>
-                </div>
-            </NavBar>
+                </div >
+            </NavBar >
         )
     }
     else {

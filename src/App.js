@@ -25,7 +25,6 @@ import { useLocation } from 'react-router-dom';
 import { setUser } from './Stores/authSlice';
 function App() {
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const connection = useRef(null);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -37,7 +36,6 @@ function App() {
         const currentTime = Date.now() / 1000;
         if (decodedToken.exp > currentTime) {
           const parsedUser = JSON.parse(storedUser);
-          setIsAdmin(JSON.parse(storedUser).roleName === 'Admin');
           dispatch(setUser(parsedUser));
         } else {
           localStorage.removeItem('authToken');
@@ -58,17 +56,39 @@ function App() {
       return raw ? JSON.parse(raw) : null;
     });
 
+    const [isAdmin, setIsAdmin] = useState(() => {
+      const raw = localStorage.getItem('user');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return parsed?.roleName === 'Admin';
+      }
+      return false;
+    });
+
     useEffect(() => {
       const interval = setInterval(() => {
         const stored = localStorage.getItem('user');
-        setUser(stored ? JSON.parse(stored) : null);
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            setIsAdmin(parsed.roleName === 'Admin');
+            setUser(parsed);
+          } catch (e) {
+            setIsAdmin(false);
+            setUser(null);
+          }
+        } else {
+          setIsAdmin(false);
+          setUser(null);
+        }
       }, 1000);
+
       return () => clearInterval(interval);
     }, []);
 
-    return user;
+    return { user, isAdmin };
   };
-  const user = useLocalStorageUser();
+  const { user, isAdmin } = useLocalStorageUser();
 
   useEffect(() => {
     const handleBeforeUnload = () => {

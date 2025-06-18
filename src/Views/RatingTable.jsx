@@ -69,7 +69,6 @@ const RatingTable = () => {
     const columns = useMemo(
         () => [
             { Header: "S/No.", accessor: (row, index) => index + 1 },
-            { Header: "Employee ID", accessor: "employeeID" },
             { Header: "Name", accessor: "fullName" },
             {
                 Header: "Rating",

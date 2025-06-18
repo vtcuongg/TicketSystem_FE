@@ -24,7 +24,9 @@ const CreateCategory = () => {
             skip: !id
         });
     useEffect(() => {
-        refetch()
+        if (Category) {
+            refetch()
+        }
     }, location)
     useEffect(() => {
         setCategoryId(Category?.data.categoryID);
