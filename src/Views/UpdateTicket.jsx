@@ -164,19 +164,31 @@ const UpdateTicket = () => {
         submitData.append("createdAt", formData.createdAt);
         submitData.append("updatedAt", formData.UpdateAt);
         submitData.append("dueDate", formData.DueDate);
-        attachments.forEach(file => {
-            submitData.append("attachments", file);
-        });
+        if (attachments.length > 0) {
+            let isFileFound = false;
+
+            attachments.forEach(file => {
+                if (file instanceof File) {
+                    submitData.append("attachments", file);
+                    isFileFound = true;
+                }
+            });
+
+            if (!isFileFound) {
+                submitData.append("isUpdateFile", false);
+            }
+        } else {
+            submitData.append("isUpdateFile", true);
+        }
+
         try {
             await updateTicket(submitData).unwrap();
             const assignedUserIds = formData.assingTo.map(user => user.value);
-            if (assignedUserIds.length > 0) {
-                const assignPayload = {
-                    ticketID: formData.ticketID,
-                    assignedToList: assignedUserIds
-                };
-                await assignToUser(assignPayload).unwrap();
-            }
+            const assignPayload = {
+                ticketID: formData.ticketID,
+                assignedToList: assignedUserIds
+            };
+            await assignToUser(assignPayload).unwrap();
             const senderID = user?.id
             const receiverIDs = [formData.createdBy, ...assignedUserIds];
             const now = new Date().toISOString();
@@ -321,11 +333,12 @@ const UpdateTicket = () => {
                                 options={
                                     Users?.data.users
                                         .filter(u => u.departmentID === user.departmentID)
-                                        .map(u => ({
+                                        .map((u, index) => ({
                                             value: u.id,
                                             label: u.userName,
                                             avatar: u.avatar,
-                                            userName: u.userName
+                                            userName: u.userName,
+                                            key: `${u.id}-${index}`
                                         }))
                                 }
                                 getOptionLabel={(option) => option.label}
@@ -491,7 +504,7 @@ const UpdateTicket = () => {
                                     <div className="attachments-preview">
                                         <div className="attachments-list">
                                             {Array.from(attachments).map((file, index) => (
-                                                <div key={file.fileName ? file.fileName : file.name} className="attachment-item">
+                                                <div key={`${file.fileName || file.name}-${index}`} className="attachment-item">
                                                     <span> <a style={{ color: 'white', textDecoration: 'none' }} href={file.url} target="_blank" rel="noopener noreferrer">
                                                         {file.fileName || file.name}
                                                     </a></span>
