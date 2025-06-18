@@ -397,7 +397,7 @@ const UpdateTicket = () => {
                                 value={formData?.Status}
                                 onChange={handleChange}
                                 required
-                                disabled={user?.roleName === "User"}
+                                readOnly={user?.roleName === "User"}
                             >
                                 <option value="">Select a Status</option>
                                 {StatusOptions.map((option) => (
