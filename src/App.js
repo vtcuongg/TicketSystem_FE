@@ -113,7 +113,7 @@ function App() {
           }
         />
         <Route path="/Login" element={<Login setConnection={(conn) => (connection.current = conn)} />} />
-        <Route path="/create-ticket" element={user ? <CreateTicket /> : <Navigate to="/login" replace />} />
+        <Route path="/create-ticket" element={user ? (isAdmin ? <Navigate to="/users" replace /> : <CreateTicket />) : <Navigate to="/login" replace />} />
         <Route path="/update-ticket/:id" element={user ? <UpdateTicket /> : <Navigate to="/login" replace />} />
         <Route path="/report" element={user ? <Report /> : <Navigate to="/login" replace />} />
         <Route path="/employee" element={user ? <Employee /> : <Navigate to="/login" replace />} />

@@ -254,9 +254,9 @@ const TicketTable = ({ onRowSelect, reloadFlag }) => {
                                 Not assigned yet</span>;
                         }
                         return (
-                            <div>
+                            <div >
                                 {value.map((user) => (
-                                    <div key={user?.assignmentID} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', width: '100px' }}>
+                                    <div key={user?.assignmentID} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', width: '180px' }}>
                                         {user?.avatar && (
                                             <img
                                                 src={user?.avatar}
