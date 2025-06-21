@@ -9,6 +9,7 @@ import { categoryApi } from '../Services/categoryApi';
 import { ticketAssignmentApi } from '../Services/ticketAssignmentApi';
 import { feedbackApi } from '../Services/feedBackApi';
 import { NotificationApi } from '../Services/NotificationApi';
+import { aiChatApi } from '../Services/chatbotAPI';
 export const store = configureStore({
     reducer: {
         auth: authReducer,
@@ -21,6 +22,7 @@ export const store = configureStore({
         [ticketAssignmentApi.reducerPath]: ticketAssignmentApi.reducer,
         [feedbackApi.reducerPath]: feedbackApi.reducer,
         [NotificationApi.reducerPath]: NotificationApi.reducer,
+        [aiChatApi.reducerPath]: aiChatApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
@@ -32,5 +34,6 @@ export const store = configureStore({
             .concat(categoryApi.middleware)
             .concat(ticketAssignmentApi.middleware)
             .concat(feedbackApi.middleware)
+            .concat(aiChatApi.middleware)
             .concat(NotificationApi.middleware),
 });

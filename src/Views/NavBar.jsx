@@ -3,7 +3,7 @@ import '../Styles/NavBar.scss';
 import '../Styles/Notification.scss';
 import logo from '../assets/Images/logo.png'
 import avatar from '../assets/Images/avatar-df.png';
-import { FaBuilding, FaTasks, FaArrowLeft, FaSearch, FaCog, FaBell, FaCommentDots, FaBars, FaChevronDown, FaArrowRight, FaCaretLeft, FaFacebookMessenger, FaPaperclip } from 'react-icons/fa';
+import { FaBuilding, MdSmartToy, FaRobot, RiRobot2Line, FaTasks, FaArrowLeft, FaSearch, FaCog, FaBell, FaCommentDots, FaBars, FaChevronDown, FaArrowRight, FaCaretLeft, FaFacebookMessenger, FaPaperclip } from 'react-icons/fa';
 import {
     FaTicketAlt,
     FaCaretDown,
@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../Stores/authSlice';
 import * as signalR from "@microsoft/signalr";
 import Loading from './Loading';
+import Chatbot from './Chatbot';
 const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isTicketOpen, setIsTicketOpen] = useState(false);
     const [isCustomerOpen, setIsCustomerOpen] = useState(false)
@@ -31,6 +32,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const [isHovering_CT, setIsHovering_CT] = useState(false);
     const [isDropdownAvatarOpen, setIsDropdownAvatarOpen] = useState(false);
     const [isChatListOpen, setIsChatListOpen] = useState(false);
+    const [isChatbotOpen, setIsChatbotOpen] = useState(false);
     const messageContainerRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [isChatDetailOpen, setIsChatDetailOpen] = useState(false);
@@ -179,6 +181,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     const handleChatItemClick = (userId) => {
         setActiveChatId(userId);
         setIsChatDetailOpen(true);
+        setIsChatbotOpen(false)
         setIsChatListOpen(false)
         refetchChatData()
     };
@@ -187,6 +190,7 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
         await markMessageAsRead(messageId);
         refetchChatData()
         refetchChatDataDetail()
+        setIsChatbotOpen(false)
         setIsChatDetailOpen(true);
         setIsChatListOpen(false)
     };
@@ -251,6 +255,13 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
     };
     const toggleChatListOpen = () => {
         setIsChatListOpen(!isChatListOpen);
+        setIsNotificationOpen(false);
+        refetchChatData()
+    };
+    const toggleChatbotOpen = () => {
+        setIsChatbotOpen(!isChatbotOpen)
+        setIsChatDetailOpen(false)
+        setIsChatListOpen(false);
         setIsNotificationOpen(false);
         refetchChatData()
     };
@@ -331,8 +342,15 @@ const NavBar = ({ children, title, path, showHeaderLink = true }) => {
                         </div>
                         <div className="Header-right-right">
                             <div className="icons">
-                                <div className="icon-wrapper-1">
-                                    <FaCog />
+                                <div className="icon-wrapper-1" onClick={(e) => {
+                                    toggleChatbotOpen()
+                                }
+                                }>
+                                    <FaRobot />
+                                    {isChatbotOpen && (
+                                        <div onClick={(e) => { e.stopPropagation(); }}>
+                                            <Chatbot toggleChatbotOpen={toggleChatbotOpen} />
+                                        </div>)}
                                 </div>
                                 {title != "Chat" && (
                                     <div className={`icon-wrapper ${chatData.some(chat => !chat.isRead) ? 'with-dot' : ''}`} onClick={toggleChatListOpen}>

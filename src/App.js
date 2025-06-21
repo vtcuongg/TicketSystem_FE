@@ -14,6 +14,7 @@ import Categories from './Views/Categories';
 import CreateCategory from './Views/CreateCategory';
 import Profile from './Views/Profile';
 import ChangePass from './Views/ChangePass';
+import Chatbot from './Views/Chatbot';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
