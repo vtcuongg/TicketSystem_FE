@@ -68,29 +68,86 @@ const RatingTable = () => {
     };
     const columns = useMemo(
         () => [
-            { Header: "S/No.", accessor: (row, index) => index + 1 },
-            { Header: "Name", accessor: "fullName" },
             {
-                Header: "Rating",
+                Header: "S/No.",
+                accessor: (_row, index) => index + 1,
+                id: "serial",
+            },
+            {
+                Header: "Name",
+                accessor: "fullName",
+                Cell: ({ value }) => (
+                    <span className="single-line-cell">{value}</span>
+                )
+            },
+            {
+                Header: "Average Rating",
                 accessor: "averageRating",
                 Cell: ({ value }) => {
+                    const rounded = Math.round(value); // làm tròn
                     const stars = Array.from({ length: 5 }, (_, index) => (
-                        <span key={index} style={{ color: index < value ? 'gold' : 'gray', fontSize: "24px" }}>★</span>
+                        <span
+                            key={index}
+                            style={{
+                                color: index < rounded ? "gold" : "gray",
+                                fontSize: "20px",
+                            }}
+                        >
+                            ★
+                        </span>
                     ));
-                    return <div>{stars}</div>;
+                    return (
+                        <div style={{ display: "flex", marginLeft: '25px' }}>
+                            {stars}
+                        </div>
+                    );
                 },
             },
             {
-                Header: "Reply Count", accessor: "totalFeedBack",
+                Header: "Positive Feedback",
+                accessor: "positiveFeedbackCount",
+            },
+            {
+                Header: "Reply Count",
+                accessor: "totalFeedBack",
                 Cell: ({ value }) => (
                     <div className="reply-count-cell">
                         <span>{value}</span>
                     </div>
                 ),
             },
+            {
+                Header: "Assigned Tickets",
+                accessor: "totalAssignedTickets",
+            },
+            {
+                Header: "Overdue Tickets",
+                accessor: "totalOverdueTickets",
+                Cell: ({ value }) => (
+                    <span style={{ color: value > 0 ? "red" : "inherit" }}>{value}</span>
+                ),
+            },
+            {
+                Header: "Completed Tickets",
+                accessor: "totalCompletedTickets",
+            },
+            {
+                Header: "In Progress",
+                accessor: "totalInProgressTickets",
+            },
+            {
+                Header: "Completion On Time Rate (%)",
+                accessor: "completionOnTimeRate",
+                Cell: ({ value }) => (
+                    <span style={{ color: value >= 80 ? "green" : value >= 50 ? "#f0ad4e" : "red" }}>
+                        {value.toFixed(2)}%
+                    </span>
+                ),
+            },
         ],
         []
     );
+
 
     const tableInstance = useTable({ columns, data: currentPageData }, useSortBy);
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -134,48 +191,50 @@ const RatingTable = () => {
                     <FaSearch className="search-icon" />
                 </div>
             </div>
-            <table {...getTableProps()} className="Rating-table">
-                <thead>
-                    {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                                    style={{ width: column.width ? column.width : 'auto' }}
-                                >
-                                    {column.render("Header")}
-                                    <span>
-                                        {column.isSorted ? (
-                                            column.isSortedDesc ? (
-                                                <span style={{ fontWeight: 'bold' }}> ▲</span>
+            <div className="Rating-table-container">
+                <table {...getTableProps()} className="Rating-table">
+                    <thead>
+                        {headerGroups.map((headerGroup) => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map((column) => (
+                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                                        style={{ width: column.width ? column.width : 'auto', paddingRight: '20px' }}
+                                    >
+                                        {column.render("Header")}
+                                        <span>
+                                            {column.isSorted ? (
+                                                column.isSortedDesc ? (
+                                                    <span style={{ fontWeight: 'bold' }}> ▲</span>
+                                                ) : (
+                                                    <span style={{ fontWeight: 'bold' }}> ▼</span>
+                                                )
                                             ) : (
-                                                <span style={{ fontWeight: 'bold' }}> ▼</span>
-                                            )
-                                        ) : (
-                                            <>
-                                                {" "}
-                                                <span style={{ opacity: 0.5 }}>▼</span>
-                                                <span style={{ opacity: 0.5 }}>▲</span>
-                                            </>
-                                        )}
-                                    </span>
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                    {rows.map((row) => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => (
-                                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                                <>
+                                                    {" "}
+                                                    <span style={{ opacity: 0.5 }}>▼</span>
+                                                    <span style={{ opacity: 0.5 }}>▲</span>
+                                                </>
+                                            )}
+                                        </span>
+                                    </th>
                                 ))}
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                        ))}
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                        {rows.map((row) => {
+                            prepareRow(row);
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {row.cells.map((cell) => (
+                                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                    ))}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
             {pageCount >= 1 && (
                 <div className="pagination">
                     <div className="pagination-info">
@@ -194,6 +253,7 @@ const RatingTable = () => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 

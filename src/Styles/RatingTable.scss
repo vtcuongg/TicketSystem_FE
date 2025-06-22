@@ -2,7 +2,6 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow-x: auto; 
     overflow-y: visible;
     background-color: #2f363e;
     border-radius: 30px;
@@ -69,7 +68,9 @@
        }
     }
   
-    
+.Rating-table-container{
+  overflow-x: auto;
+  width: 100%;    
   .Rating-table {
     width: 100%;
     border-collapse: collapse;
@@ -78,10 +79,10 @@
     font-weight: 400;
     min-width: 1200px; 
     th{
+      white-space: nowrap;   
       width: auto;
       font-weight: 900;
-      text-align: left;
-      
+      text-align: left; 
     }
     td {
       padding: 12px 0px;
@@ -89,7 +90,6 @@
       text-align: left;
       font-size: 18px;
     }
-  
     th {
       cursor: pointer;
       user-select: none;
@@ -112,7 +112,16 @@
     }
   
   }
-  .pagination {
+  
+}
+.single-line-cell {
+    white-space: nowrap;     
+    overflow: hidden;        
+    text-overflow: ellipsis; 
+    display: block;
+    max-width: 200px;        
+  }
+.pagination {
     padding-bottom: 20px;
     margin-top: 20px;
     display: flex;
